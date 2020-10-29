@@ -25,12 +25,12 @@ SECRET_KEY = 'r-z&!)vua3mx$ug)*vag(4prm7_ie_fr1*4k$nx^)gwk%$%8)b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['web', '127.0.0.1']
 
 # Application definition
 
-INSTALLED_APPS = [
+PREQ_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+EXTENSIONS = [
+		'django_extensions',
+]
+
+# Custom app
+CUSTOM_APPS = [
+		'apps.project',
+		'apps.testcase',
+		'apps.testing',
+		]
+
+INSTALLED_APPS = PREQ_APPS + EXTENSIONS + CUSTOM_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,7 +89,9 @@ WSGI_APPLICATION = 'isaac.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+	# 'NAME': BASE_DIR / 'db.sqlite3',
+	'NAME': ':memory:',
+
     }
 }
 
@@ -103,9 +118,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+DATETIME_FORMAT = 'Y-m-d H:i'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'ko-KR'
+
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -118,3 +135,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'static/'
+
+STATICFILES_DIRS = (
+    BASE_DIR / 'static/',
+    BASE_DIR / 'static/files'
+)

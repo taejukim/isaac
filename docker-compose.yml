@@ -1,0 +1,20 @@
+version: '3'
+services:
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: gunicorn -b 0.0.0.0:4000 isaac.wsgi:application 
+        volumes:
+            - .:/isaac
+        expose:
+            - "4000"
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - .:/isaac
+            - ./config/nginx/:/etc/nginx/conf.d/
+        depends_on:
+            - web
