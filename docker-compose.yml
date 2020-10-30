@@ -4,7 +4,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: gunicorn -b 0.0.0.0:4000 isaac_project.wsgi:application 
+        command: gunicorn -b 0:4000 -w 2 isaac_project.wsgi:application 
         volumes:
             - .:/isaac
         expose:
