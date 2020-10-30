@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from isaac_project import filters
+import jinja2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,9 +64,23 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'isaac.urls'
+ROOT_URLCONF = 'isaac_project.urls'
 
 TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'extensions': [
+                'jinja2.ext.do',
+                'jinja2.ext.loopcontrols',
+                'jdj_tags.extensions.DjangoCompat',
+            ],
+        },
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -80,7 +96,23 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'isaac.wsgi.application'
+# jinja2 filter update
+jinja2.filters.FILTERS.update({
+    "getitem": filters.filter_getitem,
+    "getat": filters.filter_getat,
+    "notinappend": filters.filter_notinappend,
+    "union": filters.filter_union,
+    "divide": filters.filter_divide,
+    "mod": filters.filter_mod,
+    "min": filters.filter_min,
+    "max": filters.filter_max,
+    "int": filters.filter_int,
+    "type": filters.filter_type,
+    "endswith": filters.filter_endswith,
+    "quote": filters.filter_quote,
+})
+
+WSGI_APPLICATION = 'isaac_project.wsgi.application'
 
 
 # Database
