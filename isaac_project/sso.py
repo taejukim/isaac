@@ -39,4 +39,3 @@ def check_sso(emp_no, pw):
         'dept_code':dept_code,
         'img_src':img_src
     }
-    
