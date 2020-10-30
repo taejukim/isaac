@@ -22,7 +22,7 @@ def check_sso(emp_no, pw):
     form_tag = soup.find('form', {'id':'myInfoForm'})
     if not form_tag:
         return False
-        
+
     user_name = form_tag.find('input', {'id':'empNm'}).attrs.get('value')
     email = form_tag.find('dd', {'class':'mail'}).text
     department = form_tag.find('dd').text
@@ -39,3 +39,4 @@ def check_sso(emp_no, pw):
         'dept_code':dept_code,
         'img_src':img_src
     }
+    

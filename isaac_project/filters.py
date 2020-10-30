@@ -65,3 +65,4 @@ def filter_endswith(value, arg):
 
 def filter_quote(a):
     return urlquote(a)
+    
