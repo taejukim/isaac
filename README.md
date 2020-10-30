@@ -18,4 +18,6 @@ Specification
 - django
 - gunicorn
 - nginx
+- jinja2
+- bootstrap
  
