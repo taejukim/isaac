@@ -15,17 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from isaac_project import views
-from apps import project, testcase, problem, testing
-
+from apps.problem import views
 
 urlpatterns = [
-	path('admin/', admin.site.urls),
-    path('', views.login, name='login'), # Landing
-    path('logout/', views.logout, name='logout'),
-    path('testing/', include('apps.testing.urls'), name='testing'),
-    path('project/', include('apps.project.urls'), name='project'),
-    path('testcase/', include('apps.testcase.urls'), name='testcase'),
-    path('problem/', include('apps.problem.urls'), name='problem'),
+    path('', views.main, name='problem_main'),
 
 	]

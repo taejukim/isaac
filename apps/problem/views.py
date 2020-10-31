@@ -3,4 +3,4 @@ from django.http import HttpResponse
 # Create your views here.
 
 def main(requests):
-    return HttpResponse('Testcase main')
+    return HttpResponse('problem main')

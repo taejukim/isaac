@@ -50,6 +50,7 @@ CUSTOM_APPS = [
 		'apps.project',
 		'apps.testcase',
 		'apps.testing',
+		'apps.problem',
 		]
 
 INSTALLED_APPS = PREQ_APPS + EXTENSIONS + CUSTOM_APPS
