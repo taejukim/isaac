@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# Create your views here.
 
+from accounts.login_session import login_required
+
+@login_required
 def main(requests):
     return HttpResponse('project main')

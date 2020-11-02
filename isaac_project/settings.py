@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-from isaac_project import filters
+from isaac_project import jinja2_filters as filters
 import jinja2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +39,7 @@ PREQ_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 EXTENSIONS = [
@@ -122,8 +123,8 @@ WSGI_APPLICATION = 'isaac_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-	# 'NAME': BASE_DIR / 'db.sqlite3',
-	'NAME': ':memory:',
+	'NAME': BASE_DIR / 'db.sqlite3',
+	# 'NAME': ':memory:',
 
     }
 }
@@ -131,6 +132,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = 'accounts.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

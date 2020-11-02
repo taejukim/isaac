@@ -23,7 +23,7 @@ def check_sso(emp_no, pw):
     if not form_tag:
         return False
 
-    user_name = form_tag.find('input', {'id':'empNm'}).attrs.get('value')
+    kr_name = form_tag.find('input', {'id':'empNm'}).attrs.get('value')
     email = form_tag.find('dd', {'class':'mail'}).text
     department = form_tag.find('dd').text
     title, position = form_tag.find_all('dd')[1].text.split(' / ')
@@ -31,7 +31,7 @@ def check_sso(emp_no, pw):
     img_src = form_tag.find('img').attrs.get('src')
 
     return {
-        'user_name':user_name,
+        'kr_name':kr_name,
         'email':email,
         'department':department,
         'title':title,
