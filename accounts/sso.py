@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs
 
-
 def check_sso(emp_no, pw):
     '''
     emp_no : Employee number
