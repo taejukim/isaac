@@ -1,0 +1,13 @@
+<h3>{{app_name}}</h3>
+
+<table>
+{% for key, value in user_info.items %}
+   <tr>
+        <th> {{ key }} </th>
+        <td> {{ value }} </td>
+   </tr>
+{% endfor %}
+</table>
+
+<a href="/login">login</a>
+<a href="/logout">logout</a>

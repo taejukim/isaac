@@ -31,6 +31,7 @@ def check_sso(emp_no, pw):
 
     return {
         'kr_name':kr_name,
+        'emp_no':emp_no,
         'email':email,
         'department':department,
         'title':title,
@@ -38,3 +39,4 @@ def check_sso(emp_no, pw):
         'dept_code':dept_code,
         'img_src':img_src
     }
+   

@@ -6,5 +6,9 @@ from accounts.views import get_session
 @login_required
 def main(request):
     session = get_session(request)
-    next = session.get('next')
-    return HttpResponse('testing main : {}'.format(next))
+    context = {
+        'app_name':'testing',
+        'user_info':dict(session)
+    }
+    return render(request, 'testcase/main.html', context)
+    
