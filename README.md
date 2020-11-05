@@ -20,4 +20,5 @@ Specification
 - nginx
 - jinja2
 - bootstrap
+- SSO login
  
