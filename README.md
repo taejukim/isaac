@@ -15,8 +15,9 @@ Deploy
 
 Specification
 -----
-- django
-- gunicorn
+- python 3.8.5
+- django 3.1.2
+- gunicorn 20.0.4
 - nginx
 - jinja2
 - bootstrap
