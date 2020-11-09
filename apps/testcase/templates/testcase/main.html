@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block contents %}
 <h3>{{app_name}}</h3>
 
 <table>
@@ -11,3 +14,4 @@
 
 <a href="/login">login</a>
 <a href="/logout">logout</a>
+{% endblock contents %}
