@@ -1,6 +1,9 @@
 # vscode config
 .vscode/
 
+# migrations file
+0*.py
+
 # Attached files
 static/files/
 
