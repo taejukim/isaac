@@ -12,6 +12,15 @@
 {% endfor %}
 </table>
 
+<table>
+{% for service in testcases %}
+   <tr>
+        <th> {{ service.service_id }} </th>
+        <td> {{ service.service_name }} </td>
+   </tr>
+{% endfor %}
+</table>
+
 <a href="/login">login</a>
 <a href="/logout">logout</a>
 {% endblock contents %}

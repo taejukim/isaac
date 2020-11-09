@@ -19,5 +19,7 @@ from apps.testcase import views
 
 urlpatterns = [
     path('', views.main, name='testcase_main'),
-
+    path('functions', views.functions, name='testcase_function_ajax'),
+    path('testcases', views.testcases, name='testcase_testcase_ajax'),
+    path('procedures', views.procedures, name='testcase_procedure_ajax'),
 	]
