@@ -9,6 +9,3 @@ RUN pip install --upgrade pip
 RUN pip install -r req.txt
 
 ADD . /isaac/
-
-RUN python manage.py makemigrations
-RUN python manage.py migrate
