@@ -11,12 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-from isaac_project import jinja2_filters as filters
-import jinja2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -31,7 +28,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['web', '127.0.0.1']
 
 # Application definition
-
 PREQ_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,15 +35,15 @@ PREQ_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
 ]
 
 EXTENSIONS = [
 		'django_extensions',
+        'bootstrap4',
 ]
 
-# Custom app
 CUSTOM_APPS = [
+        'accounts',
 		'apps.project',
 		'apps.testcase',
 		'apps.testing',
@@ -70,22 +66,10 @@ ROOT_URLCONF = 'isaac_project.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'extensions': [
-                'jinja2.ext.do',
-                'jinja2.ext.loopcontrols',
-                'jdj_tags.extensions.DjangoCompat',
-            ],
-        },
-    },
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,22 +81,6 @@ TEMPLATES = [
         },
     },
 ]
-
-# jinja2 filter update
-jinja2.filters.FILTERS.update({
-    "getitem": filters.filter_getitem,
-    "getat": filters.filter_getat,
-    "notinappend": filters.filter_notinappend,
-    "union": filters.filter_union,
-    "divide": filters.filter_divide,
-    "mod": filters.filter_mod,
-    "min": filters.filter_min,
-    "max": filters.filter_max,
-    "int": filters.filter_int,
-    "type": filters.filter_type,
-    "endswith": filters.filter_endswith,
-    "quote": filters.filter_quote,
-})
 
 WSGI_APPLICATION = 'isaac_project.wsgi.application'
 
