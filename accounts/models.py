@@ -10,3 +10,4 @@ class User(AbstractUser):
     dept_code = models.CharField(max_length=50, blank=True, null=True, verbose_name="부서 코드")
     img_src = models.URLField(max_length=255, blank=True, null=True, verbose_name="Profile 이미지")
     is_member = models.BooleanField(default=False, verbose_name="Isaac 회원")
+    
