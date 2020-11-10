@@ -1,11 +1,13 @@
-FROM python:3.8.5
+FROM python:3.8-slim-buster
+LABEL maintainer="taeju.kim@nhntoast.com"
+RUN pip install pipenv
 
 RUN mkdir /isaac
 WORKDIR /isaac
 
-ADD req.txt /isaac/
+COPY Pipfile /isaac/Pipfile
+COPY Pipfile.lock /isaac/Pipfile.lock
 
-RUN pip install --upgrade pip
-RUN pip install -r req.txt
+RUN pipenv install --system
 
 ADD . /isaac/
