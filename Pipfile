@@ -13,6 +13,7 @@ ipython = "*"
 pylint = "*"
 requests = "*"
 pandas = "*"
+notebook = "*"
 
 [dev-packages]
 

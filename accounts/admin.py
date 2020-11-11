@@ -36,3 +36,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
+
+admin.site.site_header = "Isaac Admin"
+admin.site.site_title = "Isaac Admin Page"

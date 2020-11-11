@@ -127,7 +127,6 @@ class Testcase_history(models.Model):
         db_table = 'testcase_testcase_history'
         managed = True
         verbose_name = 'Testcase History'
-    
 
 class Procedure_history(models.Model):
     testcase = models.ForeignKey(
