@@ -19,8 +19,7 @@ def login(request):
             if user_entity.is_member:
                 return redirect(request.session.get('next') or 'project_main')
             else: # Not Isaac memeber
-                return HttpResponse('{} is not ISAAC Member</br>Please contact to admin'\
-                    .format(user_entity.username))
+                return render(request, 'no_member.html', {})
         else:
             return redirect('login')
     else: # Get 요청

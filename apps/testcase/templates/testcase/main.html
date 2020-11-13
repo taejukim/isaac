@@ -1,6 +1,7 @@
-{% extends 'base.html' %}
-{% load bootstrap4 %}
+{% extends 'nav.html' %}
+{% load static %}
 {% block contents %}
+
 <h3>{{app_name}}</h3>
 
 <table>
@@ -10,17 +11,107 @@
         <td> {{ value }} </td>
    </tr>
 {% endfor %}
+
 </table>
 
-<table>
+<h1>Services</h1>
 {% for service in testcases %}
-   <tr>
-        <th> {{ service.service_id }} </th>
-        <td> {{ service.service_name }} </td>
-   </tr>
+<ol>
+   <li class="service" id="{{ service.service_id }}" onclick="get_function();">{{ service.service_name }}</li>
+</ol>
 {% endfor %}
-</table>
+<h1>Functions</h1>
+<ol class="function-list">
+</ol>
+<h1>Testcases</h1>
+<ol class="testcase-list">
+</ol>
+<h1>Procedures</h1>
+<ol class="procedure-list">
+</ol>
 
-<a href="/login">login</a>
-<a href="/logout">logout</a>
-{% endblock contents %}
+
+<script>
+    $(".service").on('click', function get_function(){
+        var key = $(this)[0].id
+        console.log(key);
+        $.ajax({ 
+            type: "POST", 
+            url: "{% url 'testcase_function_ajax' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'target_id' : key,
+            }, 
+            dataType: "json", 
+
+        success: function(response){
+            var lst = ''
+            response.forEach(function(item, index){
+               lst += '<li class="function" id="'+item.function_id+'" onclick="get_testcase(this);">'
+               lst +=  item.function_name + '</li>'
+            })
+            $('.function-list').html(lst)
+        },
+        error: function(request, status, error){
+            console.log(error)            
+            },
+    });
+    })
+   
+   function get_testcase(){
+      console.log($(this))
+      var key = $(this)[0].id
+        console.log(key);
+        $.ajax({ 
+            type: "POST", 
+            url: "{% url 'testcase_testcase_ajax' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'target_id' : key,
+            }, 
+            dataType: "json", 
+
+        success: function(response){
+            var lst = ''
+            response.forEach(function(item, index){
+               lst += '<li class="testcase" id="'+item.testcase_id+'">'
+               lst +=  item.summary + '</li>'
+            })
+            $('.testcase-list').html(lst)
+        },
+        error: function(request, status, error){
+            console.log(error)            
+            },
+    });
+   }
+
+  function get_procedure(){
+      var key = $(this)[0].id
+        console.log(key);
+        $.ajax({ 
+            type: "POST", 
+            url: "{% url 'testcase_procedure_ajax' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'target_id' : key,
+            }, 
+            dataType: "json", 
+
+        success: function(response){
+            var lst = ''
+            response.forEach(function(item, index){
+               lst += '<li class="procedure" id="'+item.procedure_id+'">'
+               lst +=  item.procedure + '</li>'
+            })
+            $('.procedure-list').html(lst)
+        },
+        error: function(request, status, error){
+            console.log(error)            
+            },
+    });
+   }
+   
+</script>
+
+<a></a>
+{% endblock %}

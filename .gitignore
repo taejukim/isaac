@@ -1,6 +1,9 @@
 # vscode config
 .vscode/
 
+# pycharm config
+.idea
+
 # migrations file
 0*.py
 

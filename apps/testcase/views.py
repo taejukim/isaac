@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from accounts.login_session import login_required
 from accounts.views import get_session
 from django.views.decorators.csrf import csrf_exempt
@@ -12,31 +12,32 @@ def main(request):
     testcases = Service.objects.all()
     context = {
         'testcases': testcases,
-        'user_info':dict(session)
+        'user_info':dict(session),
+        'app_name':'testcase',
     }
     return render(request, 'testcase/main.html', context)
 
 # /testcase/functions
-# @login_required
-@csrf_exempt
+@login_required
 def functions(request):
-    return get_ajax_data(request, Service, 'service_id')
+    return get_ajax_data(request, Service, 'service_id', 'function_set')
    
 # /testcase/testcases
-# @login_required
+@login_required
 def testcases(request):
-    return get_ajax_data(request, Function, 'function_id')
+    return get_ajax_data(request, Function, 'function_id', 'testcase_set')
 
 # /testcase/procedures
-# @login_required
+@login_required
 def procedures(request):
-    get_ajax_data(request, Testcase, 'testcase_id')
+    get_ajax_data(request, Testcase, 'testcase_id', 'procedure_set')
 
-@csrf_exempt
-def get_ajax_data(request, model, key):
+# @csrf_exempt
+def get_ajax_data(request, model, key, set_key):
     if request.POST:
-        id = request.POST.get(key, None)
-        entity = model.objects.filter(**{key:id})
-        return HttpResponse(list(entity.values()), content_type='application/json')
+        id = request.POST.get('target_id', None)
+        entity = model.objects.get(**{key:id})
+        retv = getattr(entity, set_key).values()
+        return JsonResponse(list(retv), safe=False)
     else:
         return HttpResponse(False)

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<body class="be-splash-screen">
+    <div class="be-wrapper be-error">
+      <div class="be-content">
+        <div class="main-content container-fluid">
+          <div class="error-container">
+            <div class="error-description">권한이 없습니다.</div>
+            <div class="error-goback-text">관리자에게 문의 해주세요.</div>
+            <div class="error-goback-button"><a class="btn btn-xl btn-grey" href="/logout">돌아가기</a></div>
+            <div class="footer">ISAAC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+{% endblock %}

@@ -10,4 +10,4 @@ def main(request):
         'app_name':'project',
         'user_info':dict(session)
     }
-    return render(request, 'testcase/main.html', context)
+    return render(request, 'project/main.html', context)

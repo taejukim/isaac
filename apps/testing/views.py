@@ -10,5 +10,5 @@ def main(request):
         'app_name':'testing',
         'user_info':dict(session)
     }
-    return render(request, 'testcase/main.html', context)
+    return render(request, 'testing/main.html', context)
     

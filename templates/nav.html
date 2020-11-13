@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="be-wrapper be-nosidebar-left">
+  <nav class="navbar navbar-expand fixed-top be-top-header">
+    <div class="container-fluid">
+      <div class="be-navbar-header"><a class="navbar-brand" href="index.html"></a>
+      </div>
+      <div class="navbar-collapse collapse" id="be-navbar-collapse">
+
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/project">Project</a></li>
+          <li class="nav-item"><a class="nav-link" href="/testing">Testing</a></li>
+          <li class="nav-item"><a class="nav-link" href="/problem">Problem</a></li>
+          <li class="nav-item"><a class="nav-link" href="/testcase">Test case</a></li>
+
+          {% comment %} dropdown nav {% endcomment %}
+          {% comment %} <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
+              role="button" aria-expanded="false">Forms <span class="mdi mdi-caret-down"></span></a>
+            <div class="dropdown-menu" role="menu"><a class="dropdown-item" href="form-elements.html">Elements</a><a
+                class="dropdown-item" href="form-validation.html">Validation</a><a class="dropdown-item"
+                href="form-wizard.html">Wizard</a><a class="dropdown-item" href="form-wysiwyg.html">WYSIWYG Editor</a>
+            </div>
+          </li> {% endcomment %}
+        </ul>
+
+      </div>
+
+      <div class="be-right-navbar">
+      
+        <ul class="nav navbar-nav float-right be-user-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-expanded="false">
+              {% if user_info.img_src %}
+                <img src="{{user_info.img_src}}" alt="Avatar">
+              {% else %}
+                <img src="{% static 'assets/img/avatar.png' %}" alt="Avatar">
+              {% endif %}
+            </a>
+            <div class="dropdown-menu" role="menu">
+              <div class="user-info">
+                <div class="user-name">{{user_info.kr_name}} {{user_info.title}}</div>
+                <div class="user-position">{{user_info.department}}</div>
+              </div>
+                  <a class="dropdown-item" href="/logout">
+                    <span class="icon mdi mdi-power"></span>Logout</a>
+            </div>
+          </li>
+        </ul>
+      
+      </div>
+
+    </div>
+  </nav>
+</div>
+<div class="main-content container-fluid">
+    {% block contents %}
+
+    {% endblock contents %}
+</div>
+{% endblock %}
