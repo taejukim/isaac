@@ -14,6 +14,10 @@ pylint = "*"
 requests = "*"
 pandas = "*"
 notebook = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-cov = "*"
+mixer = "*"
 
 [dev-packages]
 

@@ -29,7 +29,7 @@
     ```
  * pipenv shell & package install
     ```bash
-    $ cd issac
+    $ cd isaac
 
     isaac$ pipenv --python 3.8
 

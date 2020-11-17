@@ -32,7 +32,7 @@
 
 
 <script>
-    $(".service").on('click', function get_function(){
+    function get_function(){
         var key = $(this)[0].id
         console.log(key);
         $.ajax({ 
@@ -56,7 +56,7 @@
             console.log(error)            
             },
     });
-    })
+    }
    
    function get_testcase(){
       console.log($(this))

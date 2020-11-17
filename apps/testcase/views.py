@@ -32,6 +32,7 @@ def testcases(request):
 def procedures(request):
     get_ajax_data(request, Testcase, 'testcase_id', 'procedure_set')
 
+
 # @csrf_exempt
 def get_ajax_data(request, model, key, set_key):
     if request.POST:
