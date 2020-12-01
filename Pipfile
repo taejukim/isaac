@@ -4,22 +4,22 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==3.1.2"
+django = "*"
 bs4 = "*"
 django-extensions = "*"
-django-bootstrap4 = "*"
 gunicorn = "*"
-ipython = "*"
-pylint = "*"
 requests = "*"
 pandas = "*"
-notebook = "*"
 pytest = "*"
 pytest-django = "*"
 pytest-cov = "*"
 mixer = "*"
+mysqlclient = "*"
+ipython = "*"
 
 [dev-packages]
+pylint = "*"
+notebook = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
