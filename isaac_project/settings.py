@@ -24,8 +24,8 @@ SECRET_KEY = 'r-z&!)vua3mx$ug)*vag(4prm7_ie_fr1*4k$nx^)gwk%$%8)b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['web', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['web', '127.0.0.1']
 
 # Application definition
 PREQ_APPS = [
@@ -47,6 +47,7 @@ CUSTOM_APPS = [
 		'apps.testcase',
 		'apps.testing',
 		'apps.problem',
+        'apps.dooray'
 		]
 
 INSTALLED_APPS = PREQ_APPS + EXTENSIONS + CUSTOM_APPS
@@ -83,6 +84,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'isaac_project.wsgi.application'
 
+EMAIL_HOST = 'smtp.dooray.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'taeju.kim@nhntoast.com'
+EMAIL_HOST_PASSWORD = 'shg3buqffxhnkgn'
+EMAIL_USE_SSL = True
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

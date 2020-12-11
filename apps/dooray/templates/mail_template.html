@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Dooray Task</title>
+</head>
+
+<body>
+    <h1 style="font-size:32px;">혹시, 잊고 있는 업무가 있나요?</h1>
+    <h3>아래는 {{user_name}}님의 업무중 아직 <span style="color:green;font-weight:bold;" >완료</span>되지 않은 업무들 입니다.</h3>
+    <hr style="background-color:black;height:0.5px">
+    <ul>
+        {% for _, post in posts.iterrows %}
+            <li style="margin-left:-20px;margin-bottom:7px;color:red;" >
+                <a href="{{post.url}}" style="color:#81a8ce;text-decoration:none;" >
+                    <span class="task-id" style="font-weight:500;background-color:gray;border-radius:3px;color:#ffffff;padding-top:0px;padding-bottom:2px;padding-right:5px;padding-left:5px;" >{{post.project_id}}</span> {{post.subject}} - {{post.created|date:"Y/m/d"}}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <h5>* 시스템에서 자동 집계되어 매일 자동 발송되는 메일 입니다.</h5> 
+    <h6>@author taeju.kim</h6>
+</body>
+
+</html>

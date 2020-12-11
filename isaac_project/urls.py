@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic.base import RedirectView
 from isaac_project import views
-from apps import project, testcase, problem, testing
+from apps import project, testcase, problem, testing, dooray
 # import accounts
 from accounts import views as accounts_views
 
@@ -34,5 +34,6 @@ urlpatterns = [
     path('project/', include('apps.project.urls'), name='project_main'),
     path('testcase/', include('apps.testcase.urls'), name='testcase_main'),
     path('problem/', include('apps.problem.urls'), name='problem_main'),
+    path('dooray/', include('apps.dooray.urls'), name='dooray_main'),
     re_path(r'^favicon\.ico$', favicon_view), # For favicon
 	]

@@ -13,7 +13,7 @@ def test_login_view(client):
     resp = client.get(
         reverse('login')
     )
-    assert 'login' in 'resp.content'
+    assert 'login' in str(resp.content)
 
 # @pytest.mark.django_db
 # def test_testcase_view(client):
