@@ -16,6 +16,7 @@ pytest-cov = "*"
 mixer = "*"
 mysqlclient = "*"
 ipython = "*"
+openpyxl = "*"
 
 [dev-packages]
 pylint = "*"
