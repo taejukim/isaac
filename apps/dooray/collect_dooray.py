@@ -154,10 +154,11 @@ class CollectDooray(requests.Session):
                 })
         self.POSTS = pd.DataFrame(_posts)
 
-    def send_mail(self):
+    def send_mail(self, http=True):
         '''각 target user 별 메일 전송'''
         target_user = ['신선주','이연주','김태주','장선향','정연주','권혜조','김동원',
                    '정정아','최영준','정승원','김인선','김주영','이재희', '김명지']
+        # target_user = ['김태주']
         self.USERS=self.USERS[self.USERS.name.isin(target_user)]
         for _, user in self.USERS.iterrows():
             posts_df = self.POSTS[self.POSTS['to_user']==user.email]
@@ -175,7 +176,9 @@ class CollectDooray(requests.Session):
             print(user.email)
             send_mail(title, '', self.FROM_USER, [user.email], html_message=html)
             # send_mail(title, '', self.FROM_USER, ['taeju.kim@nhntoast.com'], html_message=html)
-        return HttpResponse('Send Mail OK')
+        if http:
+            return HttpResponse('Send Mail OK')
+        return 'Send Mail OK'
     
     def clear_data(self):
         '''이전 정보 삭제'''
@@ -194,7 +197,19 @@ def main(request):
     c.get_users_dataframe()
     return c.send_mail()
 
-        
+def _main():
+    # for shell
+    token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
+    project_id = '1573143134167076010' # toastcloud-qa
+    c = CollectDooray()
+    c.clear_data()
+    c.set_header(token)
+    c.get_posts(project_id=project_id, size=50, days_range=100)
+    c.make_dataframe()
+    c.get_users_dataframe()
+    return c.send_mail(http=False)
+
+
 if __name__ == "__main__":
         
     # token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
