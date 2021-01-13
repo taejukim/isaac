@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
+django = "==3.1.5"
 bs4 = "*"
 django-extensions = "*"
 gunicorn = "*"
@@ -17,6 +17,7 @@ mixer = "*"
 mysqlclient = "*"
 ipython = "*"
 openpyxl = "*"
+django-crontab = "*"
 
 [dev-packages]
 pylint = "*"

@@ -39,6 +39,7 @@ PREQ_APPS = [
 
 EXTENSIONS = [
 		'django_extensions',
+        'django_crontab', # 스케쥴러 
 ]
 
 CUSTOM_APPS = [
@@ -151,3 +152,7 @@ STATICFILES_DIRS = (
     BASE_DIR / 'static/',
     BASE_DIR / 'static/files'
 )
+
+# Crontab Schedule
+from isaac_project.cron_job import jobs
+CRONJOBS = jobs

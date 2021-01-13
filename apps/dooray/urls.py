@@ -18,6 +18,6 @@ from django.urls import path, include
 from apps.dooray import views, collect_dooray
 
 urlpatterns = [
-    path('', collect_dooray.main, name='dooray_main'),
+    path('', collect_dooray._main, name='dooray_main'),
 
 	]
