@@ -2,7 +2,7 @@ FROM python:3.9-slim-buster
 LABEL maintainer="taeju.kim@nhntoast.com"
 
 RUN apt-get update && \
-    apt-get install python3-dev default-libmysqlclient-dev build-essential -y
+    apt-get install python3-dev default-libmysqlclient-dev build-essential cron -y
 
 RUN pip install --upgrade pip
 RUN pip install pipenv
