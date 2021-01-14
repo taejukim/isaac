@@ -118,7 +118,7 @@
 Specification
 -----
 - python 3.9
-- django 3.1.3
+- django 3.1.5
 - gunicorn 20.0.4
 - nginx
 - bootstrap4
