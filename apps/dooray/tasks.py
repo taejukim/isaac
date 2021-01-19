@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 import json
 import requests
 import pandas as pd
@@ -200,8 +201,9 @@ def _main(request):
     c.get_users_dataframe()
     return c.send_mail()
 
+
 @shared_task
-def main():
+def collect_dooray_task():
     # for shell
     token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
     project_id = '1573143134167076010' # toastcloud-qa
@@ -215,15 +217,3 @@ def main():
     now = datetime.now().isoformat()
     print(f'[{now}]{result}')
     return True
-
-if __name__ == "__main__":
-        
-    # token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
-    project_id = '1573143134167076010' # toastcloud-qa
-
-    # c = CollectDooray()
-    # c.set_header(token)
-    # c.get_posts(project_id=project_id, size=50, days_range=10)
-    # c.make_dataframe()
-    # c.get_users_dataframe()
-    # c.send_mail()

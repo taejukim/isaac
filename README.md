@@ -122,3 +122,6 @@ Specification
 - gunicorn 20.0.4
 - nginx
 - bootstrap4
+- rabbitmq
+- mariadb
+- celery

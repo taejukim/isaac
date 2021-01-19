@@ -163,8 +163,9 @@ STATIC_ROOT = '/static'
 
 # Celery config
 
-CELERY_BROKER_URL= 'pyamqp://rabbitmq:5672//'
+# Celery Configuration Options
+CELERY_BROKER_URL= 'amqp://rabbitmq:5672'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_TIMEZONE = 'Asia/Seoul'
-CELERY_ENABLE_UTC = False
-
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60

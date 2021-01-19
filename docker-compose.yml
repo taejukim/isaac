@@ -8,7 +8,7 @@ networks:
 
 volumes: 
   maria_db: {}
-  rabbitmq_cache: {}
+  # rabbitmq_cache: {}
   media: {}
 
 services:
@@ -28,18 +28,19 @@ services:
     networks:
       - main
 
-  rabbitmq: &rabbitmq
+  rabbitmq:
     hostname: rabbitmq
     container_name: rabbitmq
     image: rabbitmq:latest
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-    volumes:
-      - 'rabbitmq_cache:/var/lib/rabbitmq/mnesia/'
+    # expose:
+    #   - '5672:5672'
+    #   - '15672:15672'
+    # volumes:
+    #   - 'rabbitmq_cache:/var/lib/rabbitmq/mnesia/'
     restart: on-failure
     networks:
       - main
+
 
   isaac: &isaac
     container_name: isaac
@@ -66,14 +67,12 @@ services:
     <<: *isaac
     container_name: celery_worker
     hostname: celery_worker
-    command: sh -c "celery -A isaac_project worker -l info"
+    command: celery -A isaac_project worker -l info
+    ports: []
     image: isaac-image
     depends_on:
-      - isaac
       - rabbitmq
-    links:
-      - db:db
-      - rabbitmq:rabbitmq
+      - db
     networks:
       - main
     restart: on-failure
@@ -81,12 +80,12 @@ services:
   celery_beat:
     container_name: celery_beat
     image: isaac-image
-    command: sh -c "celery -A isaac_project beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: celery -A isaac_project beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     hostname: celery_beat
     depends_on:
-      - isaac
       - rabbitmq
-      - celery_worker
+      - db
+      # - celery_worker
     restart: on-failure
     networks:
       - main
@@ -97,9 +96,9 @@ services:
     command: sh -c "pip install flower && flower -A isaac_project --broker=amqp://rabbitmq:5672// --port=5555"
     hostname: celery_flower
     depends_on:
-      - isaac
       - rabbitmq
-      - celery_worker
+      - db
+      # - celery_worker
     restart: on-failure
     ports: 
       - '5555:5555'

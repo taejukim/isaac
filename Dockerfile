@@ -8,14 +8,15 @@ apt-get install python3-dev default-libmysqlclient-dev build-essential -y
 RUN mkdir /isaac
 WORKDIR /isaac
 
-# pip upgrade and install pipenv
+# pip upgrade and install poetry
 RUN pip install --upgrade pip
-RUN pip install pipenv
+RUN pip install poetry
 
-# install packages via pipenv
-COPY Pipfile /isaac/Pipfile
-COPY Pipfile.lock /isaac/Pipfile.lock
-RUN pipenv install --system
+# install packages via poetry
+COPY poetry.lock /isaac/poetry.lock
+COPY pyproject.toml /isaac/pyproject.toml
+RUN poetry export -f requirements.txt -o requirements.txt
+RUN pip install -r requirements.txt
 
 # Add Files
 ADD . /isaac/
