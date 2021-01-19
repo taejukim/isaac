@@ -1,19 +1,121 @@
 version: '3'
+
+networks:
+  main:
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24
+
+volumes: 
+  maria_db: {}
+  rabbitmq_cache: {}
+  media: {}
+
 services:
-    web:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        volumes:
-            - .:/isaac
-        expose:
-            - "4000"
-    nginx:
-        image: nginx:latest
-        ports:
-            - "80:80"
-        volumes:
-            - .:/isaac
-            - ./config/nginx/:/etc/nginx/conf.d/
-        depends_on:
-            - web
+  db:
+    container_name: db
+    image: mariadb:latest
+    environment:
+      - MYSQL_DATABASE=isaac_database
+      - MYSQL_USER=isaac    
+      - MYSQL_PASSWORD=qwe131
+      - MYSQL_ROOT_PASSWORD=qwe131
+    ports:
+      - '3306:3306'
+    volumes:
+      - maria_db:/var/lib/mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    networks:
+      - main
+
+  rabbitmq: &rabbitmq
+    hostname: rabbitmq
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_cache:/var/lib/rabbitmq/mnesia/'
+    restart: on-failure
+    networks:
+      - main
+
+  isaac: &isaac
+    container_name: isaac
+    hostname: isaac
+    image: isaac-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - rabbitmq
+    expose:
+      - '4000'
+    links:
+      - db:db
+      - rabbitmq:rabbitmq
+    volumes:
+      - .:/isaac
+      - media:/isaac/static/media:Z
+    networks:
+     - main
+
+  celery_worker:
+    <<: *isaac
+    container_name: celery_worker
+    hostname: celery_worker
+    command: sh -c "celery -A isaac_project worker -l info"
+    image: isaac-image
+    depends_on:
+      - isaac
+      - rabbitmq
+    links:
+      - db:db
+      - rabbitmq:rabbitmq
+    networks:
+      - main
+    restart: on-failure
+
+  celery_beat:
+    container_name: celery_beat
+    image: isaac-image
+    command: sh -c "celery -A isaac_project beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    hostname: celery_beat
+    depends_on:
+      - isaac
+      - rabbitmq
+      - celery_worker
+    restart: on-failure
+    networks:
+      - main
+
+  celery_flower:
+    container_name: celery_flower
+    image: isaac-image
+    command: sh -c "pip install flower && flower -A isaac_project --broker=amqp://rabbitmq:5672// --port=5555"
+    hostname: celery_flower
+    depends_on:
+      - isaac
+      - rabbitmq
+      - celery_worker
+    restart: on-failure
+    ports: 
+      - '5555:5555'
+    networks:
+      - main
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - .:/isaac
+      - ./config/nginx/:/etc/nginx/conf.d/
+    depends_on:
+      - isaac
+    restart: on-failure
+    networks:
+      - main

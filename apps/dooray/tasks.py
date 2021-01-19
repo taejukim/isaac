@@ -9,6 +9,9 @@ from django.core.mail import send_mail
 from django.template import loader
 from django.http import HttpResponse
 
+from celery import shared_task
+
+
 class CollectDooray(requests.Session):
     '''
     Dooray API를 사용해 업무를 수집하고,
@@ -158,7 +161,7 @@ class CollectDooray(requests.Session):
         '''각 target user 별 메일 전송'''
         target_user = ['신선주','이연주','김태주','장선향','정연주','권혜조','김동원',
                    '정정아','최영준','정승원','김인선','김주영','이재희', '김명지']
-        target_user = ['김태주']
+        # target_user = ['김태주']
         self.USERS=self.USERS[self.USERS.name.isin(target_user)]
         for _, user in self.USERS.iterrows():
             posts_df = self.POSTS[self.POSTS['to_user']==user.email]
@@ -197,6 +200,7 @@ def _main(request):
     c.get_users_dataframe()
     return c.send_mail()
 
+@shared_task
 def main():
     # for shell
     token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'

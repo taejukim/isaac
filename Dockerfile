@@ -1,24 +1,24 @@
 FROM python:3.9-slim-buster
-LABEL maintainer="taeju.kim@nhntoast.com"
 
+# update and install libs
 RUN apt-get update && \
-    apt-get install python3-dev default-libmysqlclient-dev build-essential cron -y
-
-RUN pip install --upgrade pip
-RUN pip install pipenv
-
+apt-get install python3-dev default-libmysqlclient-dev build-essential -y
+    
+# make directory and copy files
 RUN mkdir /isaac
 WORKDIR /isaac
 
+# pip upgrade and install pipenv
+RUN pip install --upgrade pip
+RUN pip install pipenv
+
+# install packages via pipenv
 COPY Pipfile /isaac/Pipfile
 COPY Pipfile.lock /isaac/Pipfile.lock
-
 RUN pipenv install --system
 
-RUN crontab <<< "# new crontab"
-RUN python manage.py crontab add
-RUN python manage.py crontab show
-
+# Add Files
 ADD . /isaac/
 
+# execute docker-entrypoint.sh
 CMD [ "sh", "docker-entrypoint.sh" ]

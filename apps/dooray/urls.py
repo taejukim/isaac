@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from apps.dooray import views, collect_dooray
+from apps.dooray import views, tasks
 
 urlpatterns = [
-    path('', collect_dooray._main, name='dooray_main'),
+    path('', tasks._main, name='dooray_main'),
 
 	]
