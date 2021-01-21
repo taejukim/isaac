@@ -160,8 +160,9 @@ class CollectDooray(requests.Session):
 
     def send_mail(self, http=True):
         '''각 target user 별 메일 전송'''
+        # To-do User table에서 동적으로 가져오기
         target_user = ['신선주','이연주','김태주','장선향','정연주','권혜조','김동원',
-                   '정정아','최영준','정승원','김인선','김주영','이재희', '김명지']
+                   '정정아','최영준','정승원','김인선','김주영','이재희', '김명지', '염요섭']
         # target_user = ['김태주']
         self.USERS=self.USERS[self.USERS.name.isin(target_user)]
         for _, user in self.USERS.iterrows():
