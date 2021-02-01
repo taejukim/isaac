@@ -9,7 +9,7 @@ from apps.dooray.models import UserList
 from django.core.mail import send_mail
 from django.template import loader
 from django.http import HttpResponse
-
+from isaac_project import env
 from celery import shared_task
 
 
@@ -192,7 +192,7 @@ class CollectDooray(requests.Session):
 
 
 def _main(request):
-    token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
+    token = env.dooray_token
     project_id = '1573143134167076010' # toastcloud-qa
     c = CollectDooray()
     c.clear_data()
@@ -206,7 +206,7 @@ def _main(request):
 @shared_task
 def collect_dooray_task():
     # for shell
-    token = 'dooray-api 4CIgg_y2QTmlnHjBc-6Ifw'
+    token = env.dooray_token
     project_id = '1573143134167076010' # toastcloud-qa
     c = CollectDooray()
     c.clear_data()

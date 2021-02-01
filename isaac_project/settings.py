@@ -9,23 +9,17 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
 from pathlib import Path
-
+from isaac_project import env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r-z&!)vua3mx$ug)*vag(4prm7_ie_fr1*4k$nx^)gwk%$%8)b'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['web', '127.0.0.1']
+SECRET_KEY = env.secret_key
+DEBUG = env.secret_key
+ALLOWED_HOSTS = env.allowed_hosts
 
 # Application definition
 PREQ_APPS = [
@@ -87,35 +81,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'isaac_project.wsgi.application'
 
 # email config
-EMAIL_HOST = 'smtp.dooray.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'taeju.kim@nhntoast.com'
-EMAIL_HOST_PASSWORD = 'shg3buqffxhnkgn'
+EMAIL_HOST = env.email_host
+EMAIL_PORT = env.email_port
+EMAIL_HOST_USER = env.email_host_user
+EMAIL_HOST_PASSWORD = env.email_host_password
 EMAIL_USE_SSL = True
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'isaac_database',
-        'USER': 'isaac',
-        'PASSWORD': 'qwe131',
-        'HOST': 'db',
-        'PORT': '3306',
-    }
-}
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-# 	'NAME': BASE_DIR / 'db.sqlite3',
-# 	# 'NAME': ':memory:',
-
-#     }
-# }
+from isaac_project.db import DATABASES as db
+DATABASES = db
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -160,8 +136,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static'
-
-# Celery config
 
 # Celery Configuration Options
 CELERY_BROKER_URL= 'amqp://rabbitmq:5672'
