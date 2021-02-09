@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 SECRET_KEY = env.secret_key
-DEBUG = env.secret_key
+DEBUG = env.debug
 ALLOWED_HOSTS = env.allowed_hosts
 
 # Application definition
@@ -136,6 +136,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static'
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
 
 # Celery Configuration Options
 CELERY_BROKER_URL= 'amqp://rabbitmq:5672'

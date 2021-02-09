@@ -20,6 +20,8 @@ from isaac_project import views
 from apps import project, testcase, problem, testing, dooray
 # import accounts
 from accounts import views as accounts_views
+from django.conf.urls.static import static
+from isaac_project import settings
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
@@ -36,4 +38,4 @@ urlpatterns = [
     path('problem/', include('apps.problem.urls'), name='problem_main'),
     path('dooray/', include('apps.dooray.urls'), name='dooray_main'),
     re_path(r'^favicon\.ico$', favicon_view), # For favicon
-	]
+	] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
