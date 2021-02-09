@@ -15,8 +15,6 @@ RUN pip install poetry
 
 # install packages via poetry
 COPY poetry.lock /isaac/poetry.lock
-
-# RUN poetry shell
 COPY pyproject.toml /isaac/pyproject.toml
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-interaction
