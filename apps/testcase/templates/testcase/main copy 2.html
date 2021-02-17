@@ -1,0 +1,212 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static "/jqgrid/css/ui.jqgrid.min.css" %}">
+<script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
+<script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
+{% endblock %}
+
+
+{% block contents %}
+
+<div class="be-left-sidebar">
+    <ul class="sidebar-elements">
+            <li><a>Service</a></li>
+            <li><a href="ui-alerts.html">Alerts</a></li>
+        </ul>
+    </ul>
+</div>
+  
+<div class="be-content" id="testcase-list-jqgrid" style="width:100%;">
+    
+    <div id='wrts_testcase_mgt_left_view' style='width:40%; float:left; padding-left:10px;'>	
+        
+
+        <div class="form-group row pt-1">
+            <label class="col-12 col-sm-3 col-form-label text-sm-right"> Category #1 </label>
+                <div class="col-12 col-sm-8 col-lg-6">
+                    <select class="form-control select2 select2-xs select2-hidden-accessible">
+                    <option value="1" selected="">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    </select>
+                </div>
+                </div>
+            <div class="form-group row pt-1">
+                <label class="col-12 col-sm-3 col-form-label text-sm-right"> Category #1 </label>
+                <div class="col-12 col-sm-8 col-lg-6">
+                    <select class="form-control select2 select2-xs select2-hidden-accessible">
+                    <option value="1" selected="">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    </select>
+                </div>
+                </div>
+       
+        <table id='grid1' ></table>	
+    </div>
+    <div id='wrts_testcase_mgt_right_view' style='float:left; width:50%; padding-right:3px;' >
+    <!-- Testcase 출력 -->
+    <fieldset style='border:1px solid gray; margin-bottom:15px;'>
+        <legend><b> Test case Detail </b></legend>
+        
+        <table style='width:100%;'>
+            <tr>
+                <td width='14%'>Type</td>
+                <td width='14%'>Area</td>
+                <td width='14%'>Category</td>
+                <td width='14%'>Display</td>
+                <td width='14%'>Technique</td>
+                <td width='14%'>Priority</td>
+                <td width=*>Expected Time</td>
+            </tr>
+            <tr>
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_type' 			class='' type='text'  style='width:95%;' />	</td>
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_area' 			class='' type='text'  style='width:95%;' />	</td>					
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_category' 		class='' type='text'  style='width:95%;' />	</td>					
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_display' 		class='' type='text'  style='width:95%;' />	</td>				
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_technique' 		class='' type='text'  style='width:95%;' />	</td>					
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_priority' 		class='' type='text'  style='width:95%;' />	</td>					
+                <td>	<input readonly id='wrts_testcase_mgt_txt_testcase_expected_time' 	class='' type='text'  style='width:100%;'/>	</td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    <input readonly id='wrts_testcase_mgt_txt_testcase_id' class='' type='text' size=*  
+                           style='background:black; color:yellow; width:98%; text-align:center;' value=''/>
+                </td>
+                <td colspan=5>
+                    <input readonly id='wrts_testcase_mgt_txt_testcase_title' class='' type='text' style='width:100%;'  />
+                </td>
+            </tr>
+        </table>
+        <table width=100%>
+            <tr>
+                <td style='height:10px;'>
+                    <div id='wrts_testcase_mgt_txt_testcase_detail' style='background:white; border:1px solid gray; word-wrap:break-word; overflow-x:hidden; height:460px; overflow-y:auto; font-size:13px;'></div>
+                </td>
+            </tr>
+        </table>	
+    
+        <hr/>
+        <table width=100% id='jira_tc_view'>
+            <tr>
+                <td width=25%>
+                    TC JIRA ID 
+                    <span style='padding-left:2px;'>
+                        <img id='tc_mgt_btn_browser_on_tc_jira_id' class='img_search' src='images/search/1464950065_ic_flip_to_front_48px.png'  style='vertical-align:middle; display:none; '/>
+                    </span>	
+                </td>
+                <td width=25%>
+                    RMS ID 
+                    <span style='padding-left:2px;'>
+                        <img id='tc_mgt_btn_browser_on_tc_rms_id' class='img_search' src='images/search/1464950065_ic_flip_to_front_48px.png'  style='vertical-align:middle; display:none; '/>
+                    </span>	
+                </td>
+                <td width=25%>
+                    SRS ID 
+                    <span style='padding-left:2px;'>
+                        <img id='tc_mgt_btn_browser_on_tc_srd_id' class='img_search' src='images/search/1464950065_ic_flip_to_front_48px.png'  style='vertical-align:middle; display:none; '/>
+                    </span>
+                </td>
+                <td width=25%>
+                    Updated In SRS
+                </td>
+            </tr>
+            <tr>
+                <td width=25%>
+                    <input readonly id='wrts_testcase_mgt_jira_id' class='' type='text' style='width:98%; text-align:center;' disabled /> 
+                </td>
+                <td width=25%>
+                    <input readonly id='wrts_testcase_mgt_rms_id' class='' type='text' style='width:98%; text-align:center;' disabled />
+                </td>
+                <td width=25%>
+                    <select id='select_testcase_mgt_srs_id' style='width:100%;' disabled >
+                        <option>-</option>
+                    </select>
+                </td>
+                <td width=25%>
+                    <input readonly id='wrts_testcase_mgt_updated_in_srs' class='' type='text' style='width:100%; text-align:center;' disabled />
+                </td>
+            </tr>
+        </table>
+    </fieldset>	
+    
+    
+</div>
+    
+            <!-- context menu -->
+    <div class="contextMenu" id="wrts_testcase_mgt_grid_context_menu" style="display:none">
+        <ul style="width: 200px">
+            <li id="wrts_testcase_mgt_grid_context_menu_add">
+                <span class="ui-icon ui-icon-plus" style="float:left"></span>
+                <span style="font-size:12px;">Add</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_copy">
+                <span class="ui-icon ui-icon-copy" style="float:left"></span>
+                <span style="font-size:12px;">Copy</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_modify">
+                <span class="ui-icon ui-icon-pencil" style="float:left"></span>
+                <span style="font-size:12px;">Modify</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_delete">
+                <span class="ui-icon ui-icon-trash" style="float:left"></span>
+                <span style="font-size:12px;">Delete</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_request_tc_change">
+                <span class="ui-icon ui-icon-check" style="float:left"></span>
+                <span style="font-size:12px;">Request TC Change</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_move_to">
+                <span class="ui-icon ui-icon-arrow-1-e" style="float:left"></span>
+                <span style="font-size:12px;">Move To</span>
+            </li>
+            <li id="wrts_testcase_mgt_grid_context_menu_history">
+                <span class="ui-icon ui-icon-arrow-1-s" style="float:left"></span>
+                <span style="font-size:12px;">History</span>
+            </ul>
+    </div>
+</div>
+<script>
+    $("#grid1").jqGrid({
+        colModel: [
+            { name: "name", label: "Client", width: 53 },
+            { name: "invdate", label: "Date", width: 75, align: "center", sorttype: "date",
+                formatter: "date", formatoptions: { newformat: "d-M-Y" } },
+            { name: "amount", label: "Amount", width: 65, template: "number" },
+            { name: "tax", label: "Tax", width: 41, template: "number" },
+            { name: "total", label: "Total", width: 51, template: "number" },
+            { name: "closed", label: "Closed", width: 59, template: "booleanCheckbox", firstsortorder: "desc" },
+            { name: "ship_via", label: "Shipped via", width: 87, align: "center", formatter: "select",
+                formatoptions: { value: "FE:FedEx;TN:TNT;DH:DHL", defaultValue: "DH" } }
+        ],
+        data: [
+            { id: "10",  invdate: "2015-10-01", name: "test",   amount: "" },
+            { id: "20",  invdate: "2015-09-01", name: "test2",  amount: "300.00", tax:"20.00", closed:false, ship_via:"FE", total:"320.00"},
+            { id: "30",  invdate: "2015-09-01", name: "test3",  amount: "400.00", tax:"30.00", closed:false, ship_via:"FE", total:"430.00"},
+            { id: "40",  invdate: "2015-10-04", name: "test4",  amount: "200.00", tax:"10.00", closed:true,  ship_via:"TN", total:"210.00"},
+            { id: "50",  invdate: "2015-10-31", name: "test5",  amount: "300.00", tax:"20.00", closed:false, ship_via:"FE", total:"320.00"},
+            { id: "60",  invdate: "2015-09-06", name: "test6",  amount: "400.00", tax:"30.00", closed:false, ship_via:"FE", total:"430.00"},
+            { id: "70",  invdate: "2015-10-04", name: "test7",  amount: "200.00", tax:"10.00", closed:true,  ship_via:"TN", total:"210.00"},
+            { id: "80",  invdate: "2015-10-03", name: "test8",  amount: "300.00", tax:"20.00", closed:false, ship_via:"FE", total:"320.00"},
+            { id: "90",  invdate: "2015-09-01", name: "test9",  amount: "400.00", tax:"30.00", closed:false, ship_via:"TN", total:"430.00"},
+            { id: "100", invdate: "2015-09-08", name: "test10", amount: "500.00", tax:"30.00", closed:true,  ship_via:"TN", total:"530.00"},
+            { id: "110", invdate: "2015-09-08", name: "test11", amount: "500.00", tax:"30.00", closed:false, ship_via:"FE", total:"530.00"},
+            { id: "120", invdate: "2015-09-10", name: "test12", amount: "500.00", tax:"30.00", closed:false, ship_via:"FE", total:"530.00"}
+        ],
+        iconSet: "fontAwesome",
+        idPrefix: "g1_",
+        rownumbers: true,
+        sortname: "invdate",
+        sortorder: "desc",
+        caption: "The grid, which uses predefined formatters and templates"
+    });
+</script>
+{% endblock %}

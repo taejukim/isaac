@@ -39,6 +39,6 @@ def get_ajax_data(request, model, key, set_key):
         id = request.POST.get('target_id', None)
         entity = model.objects.get(**{key:id})
         retv = getattr(entity, set_key).values()
-        return JsonResponse(list(retv), safe=False)
+        return JsonResponse(list(retv), safe    =False)
     else:
         return HttpResponse(False)
