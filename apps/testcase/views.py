@@ -9,7 +9,7 @@ from apps.testcase.models import Function, Service, Testcase
 # @login_required
 def main(request):
     session = get_session(request)
-    testcases = Service.objects.all()
+    testcases = Service.objects.all() # SELECT * FROM Service
     context = {
         'testcases': testcases,
         'user_info':dict(session),
