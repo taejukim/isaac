@@ -1,8 +1,9 @@
 from django.contrib import admin
-from apps.testcase.models import Service, Function, Testcase, Procedure\
+from apps.testcase.models import Service, Module, Function, Testcase, Procedure\
     ,Region, Testcase_history, Procedure_history
 
 admin.site.register(Service)
+admin.site.register(Module)
 admin.site.register(Function)
 admin.site.register(Testcase)
 admin.site.register(Procedure)

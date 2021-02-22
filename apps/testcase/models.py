@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models import Q
-
 
 class Service(models.Model):
     service_id = models.CharField(max_length=30, blank=False, null=False)
@@ -14,8 +12,21 @@ class Service(models.Model):
         managed = True
         verbose_name = 'Service'
 
-class Function(models.Model):
+class Module(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    module_id = models.CharField(max_length=30, blank=False, null=False)
+    module_name = models.CharField(max_length=100, blank=False, null=False)
+    
+    def __str__(self):
+        return self.module_name
+
+    class Meta:
+        db_table = 'testcase_module'
+        managed = True
+        verbose_name = 'Module'
+
+class Function(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE)
     function_id = models.CharField(max_length=30, blank=False, null=False)
     function_name = models.CharField(max_length=100, blank=False, null=False)
     
@@ -40,6 +51,14 @@ class Region(models.Model):
 
 class Testcase(models.Model):
 
+    PRIORITY_CHOICES = [
+        ('p1','P1'),
+        ('p2','P2'),
+        ('p3','P3'),
+        ('p4','P4'),
+        ('p5','P5'),
+    ]
+
     def save(self, *args, **kwargs): # save method override for testcase_id
         self.testcase_id = self.get_testcase_id()
         super(Testcase, self).save(*args, **kwargs)
@@ -48,8 +67,9 @@ class Testcase(models.Model):
     testcase_id = models.CharField(
         max_length=100, blank=True, null=True, unique=True)
     summary = models.CharField(max_length=255, blank=False, null=False)
-    precondition = models.TextField()
-    priority = models.CharField(max_length=5, blank=False, null=False)
+    precondition = models.TextField(blank=True, null=True)
+    priority = models.CharField(
+        max_length=5, blank=False, null=False, choices=PRIORITY_CHOICES)
     is_auto = models.BooleanField(default=False)
     is_regression = models.BooleanField(default=False)
     autor = models.CharField(max_length=50, blank=False, null=False)
@@ -61,7 +81,8 @@ class Testcase(models.Model):
     def get_testcase_id(self):
         # service_id, function_id를 조합해 Testcase_id 자동 생성
         function_id = self.function.function_id
-        service_id = self.function.service.service_id
+        module_id = self.function.module.module_id
+        service_id = self.function.module.service.service_id
         try: # 현재 function에 Testcase가 있는 경우
             testcase_id = self.function.testcase_set.last().testcase_id
             serial_no = int(testcase_id.split('_')[-1])
@@ -69,8 +90,8 @@ class Testcase(models.Model):
             serial_no = 0
         finally:
             # service_id_function_id_001
-            return '{}_{}_{}'.format(
-                service_id, function_id, str(serial_no + 1).zfill(3)
+            return '{}_{}_{}{}'.format(
+                service_id, module_id, function_id, str(serial_no+1).zfill(3)
             )
 
     def __str__(self):
@@ -94,8 +115,11 @@ class Procedure(models.Model):
     expect_result = models.TextField()
 
     def get_procedure_id(self):
-        last_procedure_id = self.testcase.procedure_set.last().procedure_id
-        return last_procedure_id + 1
+        try:
+            last_procedure_id = self.testcase.procedure_set.last().procedure_id
+            return last_procedure_id + 1
+        except AttributeError:
+            return 1
 
     def __str__(self):
         return self.testcase.testcase_id + '_' + str(self.procedure_id)
