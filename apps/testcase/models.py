@@ -79,6 +79,7 @@ class Testcase(models.Model):
     author = models.CharField(max_length=50, blank=False, null=False)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     visible = models.BooleanField(default=True)
+    requirements = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)
     version = models.IntegerField()
