@@ -3,6 +3,7 @@ from django.db import models
 class Service(models.Model):
     service_id = models.CharField(max_length=30, blank=False, null=False)
     service_name = models.CharField(max_length=100, blank=False, null=False)
+    service_order = models.IntegerField(null=True)
     
     def __str__(self):
         return self.service_name
@@ -16,6 +17,7 @@ class Module(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     module_id = models.CharField(max_length=30, blank=False, null=False)
     module_name = models.CharField(max_length=100, blank=False, null=False)
+    module_order = models.IntegerField(null=True)
     
     def __str__(self):
         return self.module_name
@@ -29,7 +31,8 @@ class Function(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
     function_id = models.CharField(max_length=30, blank=False, null=False)
     function_name = models.CharField(max_length=100, blank=False, null=False)
-    
+    function_order = models.IntegerField(null=True)
+
     def __str__(self):
         return self.function_name
 
@@ -61,6 +64,7 @@ class Testcase(models.Model):
 
     def save(self, *args, **kwargs): # save method override for testcase_id
         self.testcase_id = self.get_testcase_id()
+        self.version = self.get_version()
         super(Testcase, self).save(*args, **kwargs)
 
     function = models.ForeignKey(Function, on_delete=models.CASCADE)
@@ -72,8 +76,9 @@ class Testcase(models.Model):
         max_length=5, blank=False, null=False, choices=PRIORITY_CHOICES)
     is_auto = models.BooleanField(default=False)
     is_regression = models.BooleanField(default=False)
-    autor = models.CharField(max_length=50, blank=False, null=False)
+    author = models.CharField(max_length=50, blank=False, null=False)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    visible = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)
     version = models.IntegerField()
@@ -85,14 +90,21 @@ class Testcase(models.Model):
         service_id = self.function.module.service.service_id
         try: # 현재 function에 Testcase가 있는 경우
             testcase_id = self.function.testcase_set.last().testcase_id
-            serial_no = int(testcase_id.split('_')[-1])
+            serial_no = int((testcase_id.split('_')[-1][1:4]))
         except: # 처음 Testcase를 생성하는 경우
             serial_no = 0
         finally:
             # service_id_function_id_001
+            print(serial_no+1)
             return '{}_{}_{}{}'.format(
                 service_id, module_id, function_id, str(serial_no+1).zfill(3)
             )
+
+    def get_version(self):
+        if self.version:
+            return self.version + 1
+        else:
+            return 1
 
     def __str__(self):
         return self.testcase_id
