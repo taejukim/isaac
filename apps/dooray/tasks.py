@@ -13,7 +13,7 @@ from isaac_project import env
 from celery import shared_task
 
 
-class CollectDooray(requests.Session):
+class CollectDooray:
     '''
     Dooray API를 사용해 업무를 수집하고,
     수집된 업무 담당자 별로 메일링하는 Class
@@ -23,15 +23,16 @@ class CollectDooray(requests.Session):
     FROM_USER = 'isaac@toast.com'
     POSTS = []
     USERS = []
-
-    def set_header(self, token):
+    
+    def __init__(self):
         '''인증 토큰 헤더에 저장'''
+        self.session = requests.Session()
         key = 'Authorization'
-        self.headers.update({key:token})
+        self.session.headers.update({key:env.dooray_token})
 
     def get_json(self, url, params=None):
         '''JSON 응답을 사전 객체로 반환'''
-        r = self.get(self.HOST+url, params=params)
+        r = self.session.get(self.HOST+url, params=params)
         return json.loads(r.text)
 
     def get_project_info(self, project_id):
@@ -40,11 +41,16 @@ class CollectDooray(requests.Session):
         r = self.get_json(url)
         self.project_name = r['result']['code']
 
-    def get_member(self, name, member_id=None):
+    def get_member(self, name=None, email=None, member_id=None):
         '''이름과 member_id를 사용해 Email을 가져옴'''
         # common/v1/members?name=
         url = 'common/v1/members'
-        params={'name':name}
+        if name:
+            params={'name':name}
+        elif email:
+            params = {'externalEmailAddresses':email}
+        else:
+            return False
         member_info = self.get_json(url, params=params)
         member_list = member_info.get('result')
         if len(member_list) == 1:
@@ -164,7 +170,7 @@ class CollectDooray(requests.Session):
         target_user = ['신선주','이연주','김태주','장선향','정연주','권혜조','김동원',
                    '정정아','최영준','정승원','김인선','김주영','이재희', '김명지', 
                     '염요섭', '안민형']
-        # target_user = ['김태주']
+        target_user = ['김태주']
         self.USERS=self.USERS[self.USERS.name.isin(target_user)]
         for _, user in self.USERS.iterrows():
             posts_df = self.POSTS[self.POSTS['to_user']==user.email]
@@ -197,7 +203,6 @@ def _main(request):
     project_id = '1573143134167076010' # toastcloud-qa
     c = CollectDooray()
     c.clear_data()
-    c.set_header(token)
     c.get_posts(project_id=project_id, size=50, days_range=100)
     c.make_dataframe()
     c.get_users_dataframe()
@@ -211,7 +216,6 @@ def collect_dooray_task():
     project_id = '1573143134167076010' # toastcloud-qa
     c = CollectDooray()
     c.clear_data()
-    c.set_header(token)
     c.get_posts(project_id=project_id, size=50, days_range=100)
     c.make_dataframe()
     c.get_users_dataframe()

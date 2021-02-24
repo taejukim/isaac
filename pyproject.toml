@@ -26,6 +26,7 @@ mysqlclient = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
 notebook = "^6.2.0"
+tornado = "^6.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
