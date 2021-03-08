@@ -7,183 +7,494 @@
 <link rel="stylesheet" href="{% static "/jqgrid/css/ui.jqgrid.min.css" %}">
 <script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
 <script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
+
+
+
 {% endblock %}
 
 
 {% block contents %}
+<div class="container-fluid" style="height:100%;">
 
-<div class="be-left-sidebar">
-    <ul class="sidebar-elements">
-            <li><a>Service</a></li>
-            <li><a href="ui-alerts.html">Alerts</a></li>
-        </ul>
-    </ul>
-</div>
-  
-<div class="be-content" id="testcase-list-jqgrid" style="width:100%;">
+	<div class="be-left-sidebar">
+		<ul class="sidebar-elements">
+			<li>
+				<a><h3>Services</h3></a>
+			</li>
+			{% for service in testcases %}
+			<li>
+				<a href="#">
+					{{service.service_name}}
+				</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
 
-    <div class="be-wrapper be-aside be-fixed-sidebar">
-        
-        
-        <div class="be-content be-no-padding">
-          <aside class="page-aside">
-            <div class="be-scroller-aside">
-              <div class="aside-content">
-                <div class="content">
-                  <div class="aside-header">
-                    <button class="navbar-toggle" data-target=".aside-nav" data-toggle="collapse" type="button"><span class="icon mdi mdi-caret-down"></span></button><span class="title">Mail Service</span>
-                    <p class="description">Service description</p>
-                  </div>
-                </div>
-                <div class="aside-nav collapse">
-                  <ul class="nav">
-                    <li><a href="#"><i class="icon mdi mdi-inbox"></i>Inbox<span class="badge badge-primary float-right">8</span></a></li>
-                    <li class="active"><a href="#"><i class="icon mdi mdi-email"></i>Sent Mail</a></li>
-                    <li><a href="#">             <i class="icon mdi mdi-case">               </i>Important<span class="badge badge-secondary float-right">4</span></a></li>
-                    <li><a href="#"><i class="icon mdi mdi-file"></i>Drafts</a></li>
-                    <li><a href="#"><i class="icon mdi mdi-star"></i>Tags</a></li>
-                    <li><a href="#"><i class="icon mdi mdi-delete"></i>Trash</a></li>
-                  </ul><span class="title">Labels</span>
-                  <ul class="nav nav-pills nav-stacked">
-                    <li><a href="#">
-                                      Inbox<span class="badge badge-success float-right">0</span></a></li>
-                    <li><a href="#">
-                                     Sent Mail<span class="badge badge-danger float-right">8</span></a></li>
-                    <li><a href="#">
-                                     Important<span class="badge badge-warning float-right">4</span></a></li>
-                  </ul>
-                  <div class="aside-compose"><a class="btn btn-lg btn-primary btn-block" href="#">Compose Email</a></div>
-                </div>
-              </div>
-            </div>
-          </aside>
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="email-title"><span class="icon mdi mdi-inbox"></span> Inbox <span class="new-messages">(2 new messages)</span>  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="email-search">
-                    <div class="input-group input-search input-group-sm">
-                      <input class="form-control" type="text" placeholder="Search mail..."><span class="input-group-btn">
-                        <button class="btn btn-secondary" type="button"><i class="icon mdi mdi-search"></i></button></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="email-filters">
-              <div class="email-filters-left">
-                <div class="custom-control custom-checkbox be-select-all">
-                  <input class="custom-control-input" type="checkbox" id="check1">
-                  <label class="custom-control-label" for="check1"></label>
-                </div>
-                <div class="btn-group">
-                  <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
-                     With selected <span class="caret"></span></button>
-                  <div class="dropdown-menu" role="menu"><a class="dropdown-item" href="#">Mark as rea</a><a class="dropdown-item" href="#">Mark as unread</a><a class="dropdown-item" href="#">Spam</a>
-                    <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Delete</a>
-                  </div>
-                </div>
-                <div class="btn-group">
-                  <button class="btn btn-secondary" type="button">Archive</button>
-                  <button class="btn btn-secondary" type="button">Span</button>
-                  <button class="btn btn-secondary" type="button">Delete</button>
-                </div>
-                <div class="btn-group">
-                  <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">Order by <span class="caret"></span></button>
-                  <div class="dropdown-menu dropdown-menu-right" role="menu"><a class="dropdown-item" href="#">Date</a><a class="dropdown-item" href="#">From</a><a class="dropdown-item" href="#">Subject</a>
-                    <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Size</a>
-                  </div>
-                </div>
-              </div>
-              <div class="email-filters-right"><span class="email-pagination-indicator">1-50 of 253</span>
-                <div class="btn-group email-pagination-nav">
-                  <button class="btn btn-secondary" type="button"><i class="mdi mdi-chevron-left"></i></button>
-                  <button class="btn btn-secondary" type="button"><i class="mdi mdi-chevron-right"></i></button>
-                </div>
-              </div>
-            </div>
-            <div class="email-list">
-              <div class="email-list-item email-list-item--unread">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check2">
-                    <label class="custom-control-label" for="check2"></label>
-                  </div><a class="favorite active" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right"><i class="icon mdi mdi-attachment-alt"></i> 28 Jul</span><span class="from">Penelope Thornton</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-              <div class="email-list-item email-list-item--unread">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check3">
-                    <label class="custom-control-label" for="check3"></label>
-                  </div><a class="favorite" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right"></span><span class="date float-right"><i class="icon mdi mdi-attachment-alt"></i> 13 Jul</span><span class="from">Benji Harper</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-              <div class="email-list-item">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check4">
-                    <label class="custom-control-label" for="check4"></label>
-                  </div><a class="favorite" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right">23 Jun</span><span class="from">Justine Myranda</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-              <div class="email-list-item">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check5">
-                    <label class="custom-control-label" for="check5"></label>
-                  </div><a class="favorite" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right">17 May</span><span class="from">John Doe</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-              <div class="email-list-item">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check6">
-                    <label class="custom-control-label" for="check6"></label>
-                  </div><a class="favorite" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right">16 May</span><span class="from">Sherwood Clifford</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-              <div class="email-list-item">
-                <div class="email-list-actions">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" id="check7">
-                    <label class="custom-control-label" for="check7"></label>
-                  </div><a class="favorite" href="#"><span class="mdi mdi-star"></span></a>
-                </div>
-                <div class="email-list-detail"><span class="date float-right">12 May</span><span class="from">Kristopher Donny</span>
-                  <p class="msg">Urgent - You forgot your keys in the class room, please come imediatly!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
- 
-          
-              
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
-    
+	<div class="be-content">
+		<div class="row" id="testcases" style="height:92vh;">
+			<div class="col-5" id="list">
+				<div class="card card-table" style="height: 100%;">
+					<div class="container-fluid" style="height:100%;">
+						<div class="row" >
+							<div class="col">
+								<h3>Testcases</h3>
+							</div>
+							</div>
+							<span class="table-filter-title">Category</span>
+							<div class="row" id="select-form" style="margin-bottom: 10px;">
+								<div class="col">
+									<label>Module</label>
+									<select class="form-control form-control-xs">
+										<option value="1" selected="">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</div>
+								<div class="col">
+									<label>Function</label>
+									<select class="form-control form-control-xs">
+										<option value="1" selected="">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</div>
+							</div>
+							<span class="table-filter-title">Search</span>
+							<div class="row" id="search-form">
+								<div class="col-9">
+									<div class="input-group">
+										<input class="form-control form-control-xs" type="text" placeholder="Search..">
+										<div class="input-group-append">
+											<button class="btn btn-grey" type="button">검색</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-3">
+									<label class="custom-control custom-checkbox">
+									<input class="custom-control-input" type="checkbox" checked="">
+										<span class="custom-control-label custom-control-color">미 진행 Testcase</span>
+									</label>  
+								</div>
+							</div>
+							<div class="row" id="testcases" style="margin-top:10px;">
+								<div class="col">
+									<div id="testcases_wrapper" class="dataTables_wrapper dt-bootstrap4" style="height:100%;">
+										<div class="row be-datatable-body" style="height:100%;">
+											<div class="col-sm-12" style="height:100%;padding:0;">
+												<div class="col-sm-12" style="height:100%;padding:0;">
+													<table class="table table-striped table-hover be-table-responsive dataTable no-footer" 
+														id="testcases" role="grid" aria-describedby="Testcases">
+														<thead>
+															<tr role="row">
+																<th style="width: 96px;" class="sorting_desc" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input"	type="checkbox" id="check5">
+																		<label class="custom-control-label" for="check5"></label>
+																	</div>
+																</th>
+																<th style="width: 300px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	Testcase ID
+																</th>
+																<th style="width: 800px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	Testcase
+																</th>
+																<th style="width: 100px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	Priority
+																</th>
+																<th style="width: 100px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	Auto/Reg.
+																</th>
+																<th style="width: 250px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
+																	Updated
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="odd" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+															<tr class="even" role="row">
+																<td class="sorting_1">
+																	<div class="custom-control custom-control-sm custom-checkbox">
+																		<input class="custom-control-input" type="checkbox" id="check1">
+																		<label class="custom-control-label" for="check1"></label>
+																	</div>
+																</td>
+																<td class="cell-detail">
+																	<span>TC_ID_#</span>
+																	<span class="cell-detail-description">ver : 1</span>
+																</td>
+																<td class="cell-detail" data-project="Bootstrap">
+																	<span>Testcase summary</span>
+																</td>
+																<td class="milestone" data-progress="0,45">
+																	<span>P1</span>
+																</td>
+																<td class="cell-detail">
+																	<span>O / X</span>
+																</td>
+																<td class="cell-detail">
+																	<span class="date">2021-03-21</span>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row be-datatable-footer" style="margin-top:-80px; height:80px;">
+							<div class="col-sm-5">
+								<div class="dataTables_info" id="testcases_info" role="status" aria-live="polite">
+									Showing 1 to 5 of 10 entries
+								</div>
+							</div>
+							<div class="col-sm-7">
+								<div class="dataTables_paginate paging_simple_numbers" id="testcases_paginate">
+									<ul class="pagination">
+										<li class="paginate_button page-item previous disabled" id="testcases_previous">
+											<a href="#" aria-controls="testcases" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+										</li>
+										<li class="paginate_button page-item active">
+											<a href="#" aria-controls="testcases" data-dt-idx="1" tabindex="0" class="page-link">1</a>
+										</li>
+										<li class="paginate_button page-item ">
+											<a href="#" aria-controls="testcases" data-dt-idx="2" tabindex="0" class="page-link">2</a>
+										</li>
+										<li class="paginate_button page-item next" id="testcases_next">
+											<a href="#" aria-controls="testcases" data-dt-idx="3" tabindex="0" class="page-link">Next</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col" id="content">
+					<div class="card overflow-auto" style="height: 1200px;">
+						<div class="card-header">TC_ID_#</div>
+						<div class="card-body overflow-auto" style="overflow: scroll;" >
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+							<div class="icon container text-center" style="margin-top:-10px;">
+									<span>▼</span>
+							</div>
+							<div class="card" style="height: 200px;background-color:lightgrey;">
+								<p>Lorem ipsum dolor sit amet,</p>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
 
 {% endblock %}
