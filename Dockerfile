@@ -3,7 +3,7 @@ FROM python:3.9-slim-buster
 # update and install libs
 RUN apt-get update && \
 apt-get install python3-dev default-libmysqlclient-dev \
- build-essential -y
+ build-essential libbz2-dev liblzma-dev -y
 
 # make directory and copy files
 RUN mkdir /isaac

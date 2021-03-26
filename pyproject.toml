@@ -5,7 +5,7 @@ description = ""
 authors = ["taeju.kim <iam@taeju.kim>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 Django = "3.1.5"
 bs4 = "^0.0.1"
 django-extensions = "^3.1.0"
