@@ -4,10 +4,10 @@
 {% block head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static "/jqgrid/css/ui.jqgrid.min.css" %}">
+<!-- <link rel="stylesheet" href="{% static "/jqgrid/css/ui.jqgrid.min.css" %}">
 <script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
 <script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
-
+ -->
 
 
 {% endblock %}
@@ -23,14 +23,14 @@
 			</li>
 			{% for service in testcases %}
 			<li>
-				<a href="#">
+				<a href="/testcase?service={{service.service_id}}">
 					{{service.service_name}}
 				</a>
 			</li>
 			{% endfor %}
 		</ul>
 	</div>
-
+}
 	<div class="be-content">
 		<div class="row" id="testcases" style="height:92vh;">
 			<div class="col-5" id="list">
@@ -45,22 +45,18 @@
 							<div class="row" id="select-form" style="margin-bottom: 10px;">
 								<div class="col">
 									<label>Module</label>
-									<select class="form-control form-control-xs">
-										<option value="1" selected="">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
+									<select id="module_select" class="form-control form-control-xs" onchange="module_change(this.value)">
+										{% for module in service.module_set.all %}
+										<option value="{{ module.module_id }}">{{ module.module_name }}</option>
+										{% endfor %}
 									</select>
 								</div>
 								<div class="col">
 									<label>Function</label>
-									<select class="form-control form-control-xs">
-										<option value="1" selected="">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
+									<select id="function_select" class="form-control form-control-xs" onchange="function_change()"> 
+										{% for function in module.function_set.all %}
+										<option value="{{ function.function_id }}">{{ function.function_name }}</option>
+										{% endfor %}
 									</select>
 								</div>
 							</div>
@@ -496,5 +492,43 @@
 	</div>
 </div>
 
+<script>
+	function module_change(module_id) {
+		
+		console.log(module_id);
+		var $function_list = $("#function_select");
+		console.log($function_list);
+
+		$function_list.empty();
+		if (module_id == "") {
+			function_list.append("<option value=''>--</option>");
+			return;
+		} 
+		$.ajax({
+			type: "POST",
+			url: "functions",
+			async: false,
+			data: {module_id:module_id},
+			dataType: "json",
+			success: function(jdata){
+				if (jdata.data.length == 0) {
+					$function_list.append("<option value=''>--</option>");
+				} else {
+					$(jdata.data).each(function(i) {
+						$function_list.append("<option value='"+jdata.data[i].function_id+"'>"+jdata.data[i].function_name+"</option>");
+					});
+				}
+			},
+			error: function(xhr) {
+				console.log(xhr.responseText);
+				alert("Get function list error");
+				return;
+			}
+		});
+	}
+	
+
+	
+</script>
 
 {% endblock %}

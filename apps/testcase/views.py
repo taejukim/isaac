@@ -9,9 +9,15 @@ from apps.testcase.models import Function, Service, Testcase
 # @login_required
 def main(request):
     session = get_session(request)
-    testcases = Service.objects.all() # SELECT * FROM Service
+    testcases = Service.objects.all()
+    target_service = request.GET.get('service', "sms")
+    service = testcases.get(service_id=target_service)
+    target_module = service.module_set.first().module_id
+    module = service.module_set.get(module_id=target_module)
     context = {
         'testcases': testcases,
+        'service' : service,
+        'module' : module,
         'user_info':dict(session),
         'app_name':'testcase',
     }

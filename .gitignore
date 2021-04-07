@@ -7,6 +7,9 @@
 # migrations file
 0*.py
 
+# http test folder
+http/
+
 # Attached files
 static/files/
 
