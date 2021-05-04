@@ -37,7 +37,7 @@ class Function(models.Model):
         return self.function_name
 
     class Meta:
-        db_table = 'testcase_fuction'
+        db_table = 'testcase_function'
         managed = True
         verbose_name = 'Function'
 
