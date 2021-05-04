@@ -151,7 +151,7 @@ class Testcase_history(models.Model):
     priority = models.CharField(max_length=5, blank=False, null=False)
     is_auto = models.BooleanField(default=False)
     is_regression = models.BooleanField(default=False)
-    autor = models.CharField(max_length=50, blank=False, null=False)
+    author = models.CharField(max_length=50, blank=False, null=False)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)

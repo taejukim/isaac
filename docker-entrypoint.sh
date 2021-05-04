@@ -1,7 +1,7 @@
 #!/bin/bash
 echo ":::::::Makemigragions"
-python manage.py makemigrations
-python manage.py migrate
+# python manage.py makemigrations
+# python manage.py migrate
 
 echo ":::::::Collect static files"
 python manage.py collectstatic --noinput
