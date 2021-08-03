@@ -53,14 +53,15 @@
 								</div>
 								<div class="col">
 									<label>Function</label>
-									<select id="function_select" class="form-control form-control-xs" onchange="function_change()"> 
+									<select id="function_select" class="form-control form-control-xs" onchange="function_change(this.value)"> 
+										<option value="all">전체</option>
 										{% for function in module.function_set.all %}
 										<option value="{{ function.function_id }}">{{ function.function_name }}</option>
 										{% endfor %}
 									</select>
 								</div>
 							</div>
-							<span class="table-filter-title">Search</span>
+							<!-- <span class="table-filter-title">Search</span>
 							<div class="row" id="search-form">
 								<div class="col-9">
 									<div class="input-group">
@@ -76,331 +77,14 @@
 										<span class="custom-control-label custom-control-color">미 진행 Testcase</span>
 									</label>  
 								</div>
-							</div>
+							</div> -->
 							<div class="row" id="testcases" style="margin-top:10px;">
 								<div class="col">
 									<div id="testcases_wrapper" class="dataTables_wrapper dt-bootstrap4" style="height:100%;">
 										<div class="row be-datatable-body" style="height:100%;">
 											<div class="col-sm-12" style="height:100%;padding:0;">
 												<div class="col-sm-12" style="height:100%;padding:0;">
-													<table class="table table-striped table-hover be-table-responsive dataTable no-footer" 
-														id="testcases" role="grid" aria-describedby="Testcases">
-														<thead>
-															<tr role="row">
-																<th style="width: 96px;" class="sorting_desc" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input"	type="checkbox" id="check5">
-																		<label class="custom-control-label" for="check5"></label>
-																	</div>
-																</th>
-																<th style="width: 300px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	Testcase ID
-																</th>
-																<th style="width: 800px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	Testcase
-																</th>
-																<th style="width: 100px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	Priority
-																</th>
-																<th style="width: 100px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	Auto/Reg.
-																</th>
-																<th style="width: 250px;" class="sorting" tabindex="0" aria-controls="testcases" rowspan="1" colspan="1">
-																	Updated
-																</th>
-															</tr>
-														</thead>
-														<tbody>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="odd" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-															<tr class="even" role="row">
-																<td class="sorting_1">
-																	<div class="custom-control custom-control-sm custom-checkbox">
-																		<input class="custom-control-input" type="checkbox" id="check1">
-																		<label class="custom-control-label" for="check1"></label>
-																	</div>
-																</td>
-																<td class="cell-detail">
-																	<span>TC_ID_#</span>
-																	<span class="cell-detail-description">ver : 1</span>
-																</td>
-																<td class="cell-detail" data-project="Bootstrap">
-																	<span>Testcase summary</span>
-																</td>
-																<td class="milestone" data-progress="0,45">
-																	<span>P1</span>
-																</td>
-																<td class="cell-detail">
-																	<span>O / X</span>
-																</td>
-																<td class="cell-detail">
-																	<span class="date">2021-03-21</span>
-																</td>
-															</tr>
-														</tbody>
-													</table>
+													<div id="grid"></div>
 												</div>
 											</div>
 										</div>
@@ -408,31 +92,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="row be-datatable-footer" style="margin-top:-80px; height:80px;">
-							<div class="col-sm-5">
-								<div class="dataTables_info" id="testcases_info" role="status" aria-live="polite">
-									Showing 1 to 5 of 10 entries
-								</div>
-							</div>
-							<div class="col-sm-7">
-								<div class="dataTables_paginate paging_simple_numbers" id="testcases_paginate">
-									<ul class="pagination">
-										<li class="paginate_button page-item previous disabled" id="testcases_previous">
-											<a href="#" aria-controls="testcases" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-										</li>
-										<li class="paginate_button page-item active">
-											<a href="#" aria-controls="testcases" data-dt-idx="1" tabindex="0" class="page-link">1</a>
-										</li>
-										<li class="paginate_button page-item ">
-											<a href="#" aria-controls="testcases" data-dt-idx="2" tabindex="0" class="page-link">2</a>
-										</li>
-										<li class="paginate_button page-item next" id="testcases_next">
-											<a href="#" aria-controls="testcases" data-dt-idx="3" tabindex="0" class="page-link">Next</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</div>
 				</div>
 				
@@ -493,6 +153,43 @@
 </div>
 
 <script>
+	var module_id = "{{service.module_set.first.module_id}}"
+	var function_id = "all"
+	var testcase_list = {{testcase_list|safe}}
+
+	const Grid = tui.Grid;
+
+    const grid = new Grid({
+		el: document.getElementById('grid'), // Container element
+		columns: [
+			{
+			header: 'ID',
+			name: 'testcase_id'
+			},
+			{
+			header: 'Testcase',
+			name: 'summary'
+			},
+			{
+			header: 'Priority',
+			name: 'priority'
+			},
+			{
+			header: 'Author',
+			name: 'author'
+			}
+		],
+		data: testcase_list
+		});
+	
+    Grid.applyTheme('clean')
+
+    grid.on('focusChange', (ev) => {
+        console.log(ev.rowKey)
+        console.log(ev.columnName)
+     
+  })
+
 	function module_change(module_id) {
 		
 		console.log(module_id);
@@ -501,7 +198,7 @@
 
 		$function_list.empty();
 		if (module_id == "") {
-			function_list.append("<option value=''>--</option>");
+			function_list.append("<option value='all'>전체</option>");
 			return;
 		} 
 		$.ajax({
@@ -512,8 +209,9 @@
 			dataType: "json",
 			success: function(jdata){
 				if (jdata.data.length == 0) {
-					$function_list.append("<option value=''>--</option>");
+					$function_list.append("<option value='all'>전체</option>");
 				} else {
+					$function_list.append("<option value='all'>전체</option>");
 					$(jdata.data).each(function(i) {
 						$function_list.append("<option value='"+jdata.data[i].function_id+"'>"+jdata.data[i].function_name+"</option>");
 					});
@@ -525,10 +223,39 @@
 				return;
 			}
 		});
+		this.module_id = module_id;
+		change_grid_data(this.module_id, 'all')
 	}
-	
 
-	
+	function function_change(function_id) {
+		console.log(function_id, module_id);
+		this.function_id = function_id;
+		change_grid_data(this.module_id, this.function_id)
+	}
+
+	function change_grid_data(module_id, function_id) {
+		$.ajax({
+			type: "POST",
+			url: "testcases",
+			async: false,
+			data: {
+				module_id:module_id,
+				function_id:function_id,
+				},
+			dataType: "json",
+			success: function(jdata){
+				this.testcase_list=jdata.data
+				grid.resetData(jdata.data)
+				console.log(jdata.data)
+				console.log(this.testcase_list)
+			},
+			error: function(xhr) {
+				console.log(xhr.responseText);
+				alert("Get function list error");
+				return;
+			}
+		});
+	}
 </script>
 
 {% endblock %}

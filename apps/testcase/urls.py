@@ -24,6 +24,7 @@ urlpatterns = [
 ajaxpatterns = [
     path('modules', ajax.get_modules),
     path('functions', ajax.get_functions),
+    path('testcases', ajax.get_testcases),
 ]
 
 urlpatterns = urlpatterns + ajaxpatterns
