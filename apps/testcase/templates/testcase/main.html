@@ -4,198 +4,284 @@
 {% block head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- <link rel="stylesheet" href="{% static "/jqgrid/css/ui.jqgrid.min.css" %}">
-<script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
-<script src="{% static "/jqgrid/jquery.jqgrid.min.js" %}"></script>
- -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
+<style>
+	body {
+		height: 100%;
+	}
 
+	.split {
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	
+	.content {
+		background-color: #fff;
+	}
+	
+	.gutter {
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-position: 50%;
+		height: 100%;
+	}
+	
+	.gutter.gutter-horizontal {
+		background-image: url('..{% static "img/vertical.png" %}');
+		cursor: col-resize;
+	}
+	
+	.gutter.gutter-vertical {
+		background-image: url('..{% static "img/horizontal.png" %}');
+		cursor: row-resize;
+	}
+	
+	.split.split-horizontal,
+	.gutter.gutter-horizontal {
+		height: 100%;
+		float: left;
+	}
 
+	#main {
+		height: calc(100vh - 61px);
+	}
+
+	#header {
+		background-color: #fff;
+		height: 100px;
+		padding: 5px;
+	}
+
+	#list {
+		padding: 5px;
+		background-color: #fff;
+		height: 100%;
+		float: left;
+	}
+
+	#content {
+		background-color:rgb(255, 233, 173);
+		height: 100%;
+		float: left;
+	}
+
+	#testcase {
+		width: 100%;
+		height: calc(100vh - 161px);
+	}
+
+	#sidebar {
+		padding-left: 10px;
+	}
+
+	.service {
+		padding: 8px;
+		width: 100%;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+	}
+	.service:hover{
+		background-color: lightgray;
+  		transition: background-color .3s;
+	}
+
+	a.serviceMenu{
+		color:#404040;
+		display:block;
+		height:100%;
+		width: 100%;
+		text-decoration: none;
+	}
+	.form-control{
+		width: 300px;
+		height: 35px;
+		padding: 7px;
+	}
+
+	.form-select {
+		width: 300px;
+		margin-right: 10px;
+		padding-left: 10px;
+		float: left;
+	}
+	.select_wrapper {
+		float: left;
+	}
+	.table-filter-title {
+		margin-bottom: 5px;
+	}
+
+	.gutter-horizontal {
+		height: 100%;
+	}
+
+</style>
 {% endblock %}
 
-
 {% block contents %}
-<div class="container-fluid" style="height:100%;">
+<div class="wrapper">
 
-	<div class="be-left-sidebar">
-		<ul class="sidebar-elements">
-			<li>
-				<a><h3>Services</h3></a>
-			</li>
-			{% for service in testcases %}
-			<li>
-				<a href="/testcase?service={{service.service_id}}">
-					{{service.service_name}}
-				</a>
-			</li>
-			{% endfor %}
-		</ul>
+	<div id="sidebar" class="split split-horizontal">
+		<h3>Services</h3>
+		{% for service in testcases %}
+		<div class="service">
+			<a class="serviceMenu" href="/testcase?service={{service.service_id}}">
+				{{service.service_name}}
+			</a>
+		</div>
+		{% endfor %}
 	</div>
-}
-	<div class="be-content">
-		<div class="row" id="testcases" style="height:92vh;">
-			<div class="col-5" id="list">
-				<div class="card card-table" style="height: 100%;">
-					<div class="container-fluid" style="height:100%;">
-						<div class="row" >
-							<div class="col">
-								<h3>Testcases</h3>
-							</div>
-							</div>
-							<span class="table-filter-title">Category</span>
-							<div class="row" id="select-form" style="margin-bottom: 10px;">
-								<div class="col">
-									<label>Module</label>
-									<select id="module_select" class="form-control form-control-xs" onchange="module_change(this.value)">
-										{% for module in service.module_set.all %}
-										<option value="{{ module.module_id }}">{{ module.module_name }}</option>
-										{% endfor %}
-									</select>
-								</div>
-								<div class="col">
-									<label>Function</label>
-									<select id="function_select" class="form-control form-control-xs" onchange="function_change(this.value)"> 
-										<option value="all">전체</option>
-										{% for function in module.function_set.all %}
-										<option value="{{ function.function_id }}">{{ function.function_name }}</option>
-										{% endfor %}
-									</select>
-								</div>
-							</div>
-							<!-- <span class="table-filter-title">Search</span>
-							<div class="row" id="search-form">
-								<div class="col-9">
-									<div class="input-group">
-										<input class="form-control form-control-xs" type="text" placeholder="Search..">
-										<div class="input-group-append">
-											<button class="btn btn-grey" type="button">검색</button>
-										</div>
-									</div>
-								</div>
-								<div class="col-3">
-									<label class="custom-control custom-checkbox">
-									<input class="custom-control-input" type="checkbox" checked="">
-										<span class="custom-control-label custom-control-color">미 진행 Testcase</span>
-									</label>  
-								</div>
-							</div> -->
-							<div class="row" id="testcases" style="margin-top:10px;">
-								<div class="col">
-									<div id="testcases_wrapper" class="dataTables_wrapper dt-bootstrap4" style="height:100%;">
-										<div class="row be-datatable-body" style="height:100%;">
-											<div class="col-sm-12" style="height:100%;padding:0;">
-												<div class="col-sm-12" style="height:100%;padding:0;">
-													<div id="grid"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-				
-				<div class="col" id="content">
-					<div class="card overflow-auto" style="height: 1200px;">
-						<div class="card-header">TC_ID_#</div>
-						<div class="card-body overflow-auto" style="overflow: scroll;" >
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-							<div class="icon container text-center" style="margin-top:-10px;">
-									<span>▼</span>
-							</div>
-							<div class="card" style="height: 200px;background-color:lightgrey;">
-								<p>Lorem ipsum dolor sit amet,</p>
-							</div>
-					</div>
-				</div>
+	
+	<div id="main" class="split split-horizontal">
+		<div id="header">
+			<p class="table-filter-title">{{service.service_name}}</p>
+			<div class="col form-select">
+				<label>Module</label>
+				<select id="module_select" class="form-control" onchange="module_change(this.value)">
+					{% for module in service.module_set.all %}
+					<option value="{{ module.module_id }}">{{ module.module_name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col form-select">
+				<label>Function</label>
+				<select id="function_select" class="form-control" onchange="function_change(this.value)"> 
+					<option value="all">전체</option>
+					{% for function in module.function_set.all %}
+					<option value="{{ function.function_id }}">{{ function.function_name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		
+		<div id="testcase">
+			<div id="list" class="split content">
+				<div id="grid" style="width: 100%;"></div>
+			</div>
+			<div id="content" class="split content">
+				content
 			</div>
 		</div>
 	</div>
+	
 </div>
 
+
 <script>
+	// Get values
+	var current_service_id = "{{service.service_id}}"
 	var module_id = "{{service.module_set.first.module_id}}"
 	var function_id = "all"
-	var testcase_list = {{testcase_list|safe}}
-
+	let testcase_list = {{testcase_list|safe}}
+	
+	// Grid
 	const Grid = tui.Grid;
-
-    const grid = new Grid({
-		el: document.getElementById('grid'), // Container element
-		columns: [
-			{
-			header: 'ID',
-			name: 'testcase_id'
+	var grid = createGrid(testcase_list);
+	function createGrid(data) {
+		this.grid = new Grid({
+			el: document.getElementById('grid'), // Container element
+			columnOptions: {
+				minWidth: 80
 			},
-			{
-			header: 'Testcase',
-			name: 'summary'
-			},
-			{
-			header: 'Priority',
-			name: 'priority'
-			},
-			{
-			header: 'Author',
-			name: 'author'
-			}
-		],
-		data: testcase_list
+			rowHeight: 30,
+			minRowHeight: 20,
+			bodyHeight:'auto',
+			
+			columns: [
+				{
+					header: 'ID',
+					name: 'testcase_id',
+					width: 'auto',
+					minWidth: 100,
+					sortable: true,
+					sortingType: 'desc',
+					filter: 'text'
+				},
+				{
+					header: 'Testcase',
+					name: 'summary',
+					minWidth: 200,
+					sortable: true,
+					sortingType: 'desc',
+					filter: 'text'
+				},
+				{
+					header: 'Priority',
+					name: 'priority',
+					minWidth: 100,
+					width: 'auto',
+					sortable: true,
+					sortingType: 'desc',
+					filter: 'text'
+				},
+				{
+					header: 'Author',
+					name: 'author',
+					minWidth: 100,
+					width: 'auto',
+					sortable: true,
+					sortingType: 'desc',
+					filter: 'text'
+				}
+			],
+			data: data
 		});
 	
-    Grid.applyTheme('clean')
+		Grid.applyTheme('clean')
+		grid.on('focusChange', (ev) => {
+			console.log(ev.rowKey)
+			console.log(ev.columnName)
+		})
+		return grid;
+	}
+	
+	// split.js
+	var gutterSize = 4;
+	var sidebar_sizes = localStorage.getItem('sidebar_sizes')
 
-    grid.on('focusChange', (ev) => {
-        console.log(ev.rowKey)
-        console.log(ev.columnName)
-     
-  })
+	if (sidebar_sizes) {
+		sidebar_sizes = JSON.parse(sidebar_sizes)
+	} else {
+		sidebar_sizes = [15, 85] // default sizes
+	}
+	Split(['#sidebar', '#main'], {
+		sizes: sidebar_sizes,
+		gutterSize: this.gutterSize,
+		cursor: 'col-resize',
+		onDragEnd: function (sidebar_sizes) {
+			localStorage.setItem('sidebar_sizes', JSON.stringify(sidebar_sizes))
+			grid.destroy();
+			createGrid(testcase_list);
+		},
+	})
+	$(".gutter-horizontal").css('height', 1000);
 
+	var list_sizes = localStorage.getItem('list-sizes')
+	if (list_sizes) {
+		list_sizes = JSON.parse(list_sizes)
+	} else {
+		list_sizes = [40, 60] // default sizes
+	}
+
+	Split(['#list', '#content'], {
+		sizes: list_sizes,
+		gutterSize: this.gutterSize,
+		cursor: 'col-resize',
+		onDragEnd: function (list_sizes) {
+			localStorage.setItem('list-sizes', JSON.stringify(list_sizes))
+			grid.destroy();
+			createGrid(testcase_list);
+		},
+	})
+
+	// ajax
 	function module_change(module_id) {
 		
 		console.log(module_id);
 		var $function_list = $("#function_select");
 		console.log($function_list);
-
+		
 		$function_list.empty();
 		if (module_id == "") {
 			function_list.append("<option value='all'>전체</option>");
@@ -205,7 +291,7 @@
 			type: "POST",
 			url: "functions",
 			async: false,
-			data: {module_id:module_id},
+			data: {service_id:current_service_id, module_id:module_id},
 			dataType: "json",
 			success: function(jdata){
 				if (jdata.data.length == 0) {
@@ -239,15 +325,14 @@
 			url: "testcases",
 			async: false,
 			data: {
+				service_id:current_service_id,
 				module_id:module_id,
 				function_id:function_id,
 				},
 			dataType: "json",
 			success: function(jdata){
-				this.testcase_list=jdata.data
-				grid.resetData(jdata.data)
-				console.log(jdata.data)
-				console.log(this.testcase_list)
+				testcase_list=jdata.data
+				grid.resetData(testcase_list)
 			},
 			error: function(xhr) {
 				console.log(xhr.responseText);

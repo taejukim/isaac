@@ -1,0 +1,215 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://unpkg.com/split-grid/dist/split-grid.js"></script>
+{% endblock %}
+
+{% block contents %}
+
+<div class="container-fluid" style="height:100%;">
+	<div id="sidebar" class="be-left-sidebar" >
+		<ul class="sidebar-elements">
+			<li>
+				<a><h3>Services</h3></a>
+			</li>
+			{% for service in testcases %}
+			<li>
+				<a href="/testcase?service={{service.service_id}}">
+					{{service.service_name}}
+				</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+}
+	<div id="contents" class="be-content">
+		<div class="row" id="testcases" style="height:92vh;">
+			<div class="col-5" id="list">
+				<div class="card card-table" style="height: 100%;">
+					<div class="container-fluid" style="height:100%;">
+						<div class="row" >
+							<div class="col">
+								<h3>Testcases</h3>
+							</div>
+							</div>
+							<span class="table-filter-title">Category</span>
+							<div class="row" id="select-form" style="margin-bottom: 10px;">
+								<div class="col">
+									<label>Module</label>
+									<select id="module_select" class="form-control form-control-xs" onchange="module_change(this.value)">
+										{% for module in service.module_set.all %}
+										<option value="{{ module.module_id }}">{{ module.module_name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col">
+									<label>Function</label>
+									<select id="function_select" class="form-control form-control-xs" onchange="function_change(this.value)"> 
+										<option value="all">전체</option>
+										{% for function in module.function_set.all %}
+										<option value="{{ function.function_id }}">{{ function.function_name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<!-- <span class="table-filter-title">Search</span>
+							<div class="row" id="search-form">
+								<div class="col-9">
+									<div class="input-group">
+										<input class="form-control form-control-xs" type="text" placeholder="Search..">
+										<div class="input-group-append">
+											<button class="btn btn-grey" type="button">검색</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-3">
+									<label class="custom-control custom-checkbox">
+									<input class="custom-control-input" type="checkbox" checked="">
+										<span class="custom-control-label custom-control-color">미 진행 Testcase</span>
+									</label>  
+								</div>
+							</div> -->
+							<div class="row" id="testcases" style="margin-top:10px;">
+								<div class="col">
+									<div id="testcases_wrapper" class="dataTables_wrapper dt-bootstrap4" style="height:100%;">
+										<div class="row be-datatable-body" style="height:100%;">
+											<div class="col-sm-12" style="height:100%;padding:0;">
+												<div class="col-sm-12" style="height:100%;padding:0;">
+													<div id="grid"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				
+				<div class="col" id="content">
+					<div class="card overflow-auto" style="height: 1200px;">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	Split(['#sidebar', '#contents'], {
+		sizes: [10, 90],
+		minSize: 200
+	});
+
+	var module_id = "{{service.module_set.first.module_id}}"
+	var function_id = "all"
+	var testcase_list = {{testcase_list|safe}}
+
+	const Grid = tui.Grid;
+
+    const grid = new Grid({
+		el: document.getElementById('grid'), // Container element
+		columns: [
+			{
+			header: 'ID',
+			name: 'testcase_id'
+			},
+			{
+			header: 'Testcase',
+			name: 'summary'
+			},
+			{
+			header: 'Priority',
+			name: 'priority'
+			},
+			{
+			header: 'Author',
+			name: 'author'
+			}
+		],
+		data: testcase_list
+		});
+	
+    Grid.applyTheme('clean')
+
+    grid.on('focusChange', (ev) => {
+        console.log(ev.rowKey)
+        console.log(ev.columnName)
+     
+  })
+
+	function module_change(module_id) {
+		
+		console.log(module_id);
+		var $function_list = $("#function_select");
+		console.log($function_list);
+
+		$function_list.empty();
+		if (module_id == "") {
+			function_list.append("<option value='all'>전체</option>");
+			return;
+		} 
+		$.ajax({
+			type: "POST",
+			url: "functions",
+			async: false,
+			data: {module_id:module_id},
+			dataType: "json",
+			success: function(jdata){
+				if (jdata.data.length == 0) {
+					$function_list.append("<option value='all'>전체</option>");
+				} else {
+					$function_list.append("<option value='all'>전체</option>");
+					$(jdata.data).each(function(i) {
+						$function_list.append("<option value='"+jdata.data[i].function_id+"'>"+jdata.data[i].function_name+"</option>");
+					});
+				}
+			},
+			error: function(xhr) {
+				console.log(xhr.responseText);
+				alert("Get function list error");
+				return;
+			}
+		});
+		this.module_id = module_id;
+		change_grid_data(this.module_id, 'all')
+	}
+
+	function function_change(function_id) {
+		console.log(function_id, module_id);
+		this.function_id = function_id;
+		change_grid_data(this.module_id, this.function_id)
+	}
+
+	function change_grid_data(module_id, function_id) {
+		$.ajax({
+			type: "POST",
+			url: "testcases",
+			async: false,
+			data: {
+				module_id:module_id,
+				function_id:function_id,
+				},
+			dataType: "json",
+			success: function(jdata){
+				this.testcase_list=jdata.data
+				grid.resetData(jdata.data)
+				console.log(jdata.data)
+				console.log(this.testcase_list)
+			},
+			error: function(xhr) {
+				console.log(xhr.responseText);
+				alert("Get function list error");
+				return;
+			}
+		});
+	}
+</script>
+
+{% endblock %}

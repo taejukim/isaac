@@ -17,7 +17,9 @@ def get_functions(request):
     if request.method == 'POST':
         post_data = request.POST
         module_id = post_data.get('module_id')
-        module = Module.objects.get(module_id = module_id)
+        service_id = post_data.get('service_id')
+        modules = Module.objects.filter(service__service_id=service_id)
+        module = modules.get(module_id=module_id)
         functions = module.function_set.values('function_name', 'function_id')
         return JsonResponse({"data":list(functions)})
     return False
@@ -26,10 +28,12 @@ def get_functions(request):
 def get_testcases(request):
     if request.method == 'POST':
         post_data = request.POST
+        service_id = post_data.get('service_id')
         module_id= post_data.get('module_id')
         function_id = post_data.get('function_id')
         if function_id == 'all':
-            function = Function.objects.filter(module__module_id=module_id)
+            function = Function.objects.filter(module__module_id=module_id)\
+                                        .filter(module__service__service_id=service_id)
             testcases = []
             for f in function:
                 testcases += f.testcase_set.values(
@@ -39,7 +43,11 @@ def get_testcases(request):
                     'author',
                     )
         else:
-            function = Function.objects.get(module__module_id=module_id, function_id=function_id)
+            function = Function.objects.get(
+                module__service__service_id=service_id,
+                module__module_id=module_id,
+                function_id=function_id
+                )
             testcases = function.testcase_set.values(
                 'testcase_id',
                 'summary',
