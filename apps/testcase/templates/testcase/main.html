@@ -243,10 +243,11 @@
 	if (sidebar_sizes) {
 		sidebar_sizes = JSON.parse(sidebar_sizes)
 	} else {
-		sidebar_sizes = [15, 85] // default sizes
+		sidebar_sizes = [10, 90] // default sizes
 	}
 	Split(['#sidebar', '#main'], {
 		sizes: sidebar_sizes,
+		minSize: 200,
 		gutterSize: this.gutterSize,
 		cursor: 'col-resize',
 		onDragEnd: function (sidebar_sizes) {
