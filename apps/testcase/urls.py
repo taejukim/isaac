@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from apps.testcase import views, ajax
+from apps.testcase import views, ajax 
 
 urlpatterns = [
     path('', views.main, name='testcase_main'),
+    path('testcase/<str:testcase_id>', views.get_testcase),
 	]
 
 ajaxpatterns = [

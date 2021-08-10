@@ -1,0 +1,77 @@
+<!-- Testcase Title -->
+<div class="testcaseTitle">
+    <button class="btn btn-rounded btn-space btn-primary">{{testcase.testcase_id}}</button>
+    <span class="testcaseSummary">{{testcase.summary}}</span>
+    <a class="btn btn-space btn-secondary testcaseHandler" href="edit/{{testcase.testcase_id}}">
+        <i class="mdi mdi-edit"></i>
+        Edit
+    </a>
+</div>
+<!-- Testcase attributes -->
+<div class="testcaseAttribute">
+    <div id="attributes" class="card card-border">
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Priority</label></br>
+                        {{testcase.priority|default:"-"}}
+                    </td>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Region</label></br>
+                        {{testcase.region|default:"-"}}
+                    </td>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Author</label></br>
+                        {{testcase.author|default:"-"}}
+                    </td>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Updated</label></br>
+                        {{testcase.updated|date:"Y-m-d f"}}    
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Version</label></br>
+                        {{testcase.version|default:"-"}}
+                    </td>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Is Regression</label></br>
+                        {{testcase.is_regression|default:"-"}}
+                    </td>
+                    <td style="width: 25%">
+                        <label class="attibute-label">Is Automated</label></br>
+                        {{testcase.is_auto|default:"-"}}
+                    </td>
+                    <td style="width: 25%"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Pre-condition -->
+<div class="precondition">
+    <h2><span>Precondition</span></h2>
+    <p class="text-wrapper">    
+        {{testcase.precondition|default:"-"}}
+    </p>
+</div>
+<!-- Procedures -->
+<div class="scenario">
+    <h2><span>Steps</span></h2>
+    <div class="text-wrapper">
+        <table class="table table-borderless">
+            {% for procedure in testcase.procedure_set.all %}
+            <tr>
+                <td class="step-index align-baseline">
+                    <h4>{{procedure.procedure_id}}</h4>
+                </td>
+                <td class="step-contents">
+                    <div class="card">{{procedure.procedure}}</div>
+                    <div class="card"> {{procedure.expect_result}}</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

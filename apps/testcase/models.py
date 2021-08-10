@@ -179,3 +179,4 @@ class Procedure_history(models.Model):
         db_table = 'testcase_procedure_history'
         managed = True
         verbose_name = 'Procedure History'
+        ordering = ['procedure_id']

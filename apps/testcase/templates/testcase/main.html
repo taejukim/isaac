@@ -4,119 +4,9 @@
 {% block head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static "/css/testcase.css" %}"/>
+<script src="{% static "/js/testcase.js" %}" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
-<style>
-	body {
-		height: 100%;
-	}
-
-	.split {
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
-	
-	.content {
-		background-color: #fff;
-	}
-	
-	.gutter {
-		background-color: transparent;
-		background-repeat: no-repeat;
-		background-position: 50%;
-		height: 100%;
-	}
-	
-	.gutter.gutter-horizontal {
-		background-image: url('..{% static "img/vertical.png" %}');
-		cursor: col-resize;
-	}
-	
-	.gutter.gutter-vertical {
-		background-image: url('..{% static "img/horizontal.png" %}');
-		cursor: row-resize;
-	}
-	
-	.split.split-horizontal,
-	.gutter.gutter-horizontal {
-		height: 100%;
-		float: left;
-	}
-
-	#main {
-		height: calc(100vh - 61px);
-	}
-
-	#header {
-		background-color: #fff;
-		height: 100px;
-		padding: 5px;
-	}
-
-	#list {
-		padding: 5px;
-		background-color: #fff;
-		height: 100%;
-		float: left;
-	}
-
-	#content {
-		background-color:rgb(255, 233, 173);
-		height: 100%;
-		float: left;
-	}
-
-	#testcase {
-		width: 100%;
-		height: calc(100vh - 161px);
-	}
-
-	#sidebar {
-		padding-left: 10px;
-	}
-
-	.service {
-		padding: 8px;
-		width: 100%;
-		overflow:hidden;
-		text-overflow:ellipsis;
-		white-space:nowrap;
-	}
-	.service:hover{
-		background-color: lightgray;
-  		transition: background-color .3s;
-	}
-
-	a.serviceMenu{
-		color:#404040;
-		display:block;
-		height:100%;
-		width: 100%;
-		text-decoration: none;
-	}
-	.form-control{
-		width: 300px;
-		height: 35px;
-		padding: 7px;
-	}
-
-	.form-select {
-		width: 300px;
-		margin-right: 10px;
-		padding-left: 10px;
-		float: left;
-	}
-	.select_wrapper {
-		float: left;
-	}
-	.table-filter-title {
-		margin-bottom: 5px;
-	}
-
-	.gutter-horizontal {
-		height: 100%;
-	}
-
-</style>
 {% endblock %}
 
 {% block contents %}
@@ -125,14 +15,14 @@
 	<div id="sidebar" class="split split-horizontal">
 		<h3>Services</h3>
 		{% for service in testcases %}
-		<div class="service">
+		<div class="service" id="{{service.service_id}}">
 			<a class="serviceMenu" href="/testcase?service={{service.service_id}}">
 				{{service.service_name}}
 			</a>
 		</div>
 		{% endfor %}
 	</div>
-	
+
 	<div id="main" class="split split-horizontal">
 		<div id="header">
 			<p class="table-filter-title">{{service.service_name}}</p>
@@ -146,7 +36,7 @@
 			</div>
 			<div class="col form-select">
 				<label>Function</label>
-				<select id="function_select" class="form-control" onchange="function_change(this.value)"> 
+				<select id="function_select" class="form-control" onchange="function_change(this.value)">
 					<option value="all">전체</option>
 					{% for function in module.function_set.all %}
 					<option value="{{ function.function_id }}">{{ function.function_name }}</option>
@@ -154,90 +44,40 @@
 				</select>
 			</div>
 		</div>
-		
+
 		<div id="testcase">
 			<div id="list" class="split content">
 				<div id="grid" style="width: 100%;"></div>
 			</div>
 			<div id="content" class="split content">
-				content
+
+				<div class="testcaseWrapper">
+
+					<!-- testcase is here -->
+
+				</div>
+
 			</div>
 		</div>
 	</div>
-	
 </div>
-
 
 <script>
 	// Get values
 	var current_service_id = "{{service.service_id}}"
 	var module_id = "{{service.module_set.first.module_id}}"
 	var function_id = "all"
-	let testcase_list = {{testcase_list|safe}}
+	let testcase_list = {{testcase_list | safe}}
 	
+	// Testcase contents
+	get_testcase(testcase_list[0].testcase_id);
+
 	// Grid
 	const Grid = tui.Grid;
-	var grid = createGrid(testcase_list);
-	function createGrid(data) {
-		this.grid = new Grid({
-			el: document.getElementById('grid'), // Container element
-			columnOptions: {
-				minWidth: 80
-			},
-			rowHeight: 30,
-			minRowHeight: 20,
-			bodyHeight:'auto',
-			
-			columns: [
-				{
-					header: 'ID',
-					name: 'testcase_id',
-					width: 'auto',
-					minWidth: 100,
-					sortable: true,
-					sortingType: 'desc',
-					filter: 'text'
-				},
-				{
-					header: 'Testcase',
-					name: 'summary',
-					minWidth: 200,
-					sortable: true,
-					sortingType: 'desc',
-					filter: 'text'
-				},
-				{
-					header: 'Priority',
-					name: 'priority',
-					minWidth: 100,
-					width: 'auto',
-					sortable: true,
-					sortingType: 'desc',
-					filter: 'text'
-				},
-				{
-					header: 'Author',
-					name: 'author',
-					minWidth: 100,
-					width: 'auto',
-					sortable: true,
-					sortingType: 'desc',
-					filter: 'text'
-				}
-			],
-			data: data
-		});
-	
-		Grid.applyTheme('clean')
-		grid.on('focusChange', (ev) => {
-			console.log(ev.rowKey)
-			console.log(ev.columnName)
-		})
-		return grid;
-	}
-	
+	var grid = createGrid(testcase_list);	
+
 	// split.js
-	var gutterSize = 4;
+	var gutterSize = 5;
 	var sidebar_sizes = localStorage.getItem('sidebar_sizes')
 
 	if (sidebar_sizes) {
@@ -262,7 +102,7 @@
 	if (list_sizes) {
 		list_sizes = JSON.parse(list_sizes)
 	} else {
-		list_sizes = [40, 60] // default sizes
+		list_sizes = [50, 50] // default sizes
 	}
 
 	Split(['#list', '#content'], {
@@ -275,73 +115,8 @@
 			createGrid(testcase_list);
 		},
 	})
+	$("#"+current_service_id).css("background-color", "lightgray");
+	$("#testcase_menu").css("background-color", "whitesmoke");
 
-	// ajax
-	function module_change(module_id) {
-		
-		console.log(module_id);
-		var $function_list = $("#function_select");
-		console.log($function_list);
-		
-		$function_list.empty();
-		if (module_id == "") {
-			function_list.append("<option value='all'>전체</option>");
-			return;
-		} 
-		$.ajax({
-			type: "POST",
-			url: "functions",
-			async: false,
-			data: {service_id:current_service_id, module_id:module_id},
-			dataType: "json",
-			success: function(jdata){
-				if (jdata.data.length == 0) {
-					$function_list.append("<option value='all'>전체</option>");
-				} else {
-					$function_list.append("<option value='all'>전체</option>");
-					$(jdata.data).each(function(i) {
-						$function_list.append("<option value='"+jdata.data[i].function_id+"'>"+jdata.data[i].function_name+"</option>");
-					});
-				}
-			},
-			error: function(xhr) {
-				console.log(xhr.responseText);
-				alert("Get function list error");
-				return;
-			}
-		});
-		this.module_id = module_id;
-		change_grid_data(this.module_id, 'all')
-	}
-
-	function function_change(function_id) {
-		console.log(function_id, module_id);
-		this.function_id = function_id;
-		change_grid_data(this.module_id, this.function_id)
-	}
-
-	function change_grid_data(module_id, function_id) {
-		$.ajax({
-			type: "POST",
-			url: "testcases",
-			async: false,
-			data: {
-				service_id:current_service_id,
-				module_id:module_id,
-				function_id:function_id,
-				},
-			dataType: "json",
-			success: function(jdata){
-				testcase_list=jdata.data
-				grid.resetData(testcase_list)
-			},
-			error: function(xhr) {
-				console.log(xhr.responseText);
-				alert("Get function list error");
-				return;
-			}
-		});
-	}
 </script>
-
 {% endblock %}

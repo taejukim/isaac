@@ -58,6 +58,12 @@ def get_ajax_data(request, model, key, set_key):
         id = request.POST.get('target_id', None)
         entity = model.objects.get(**{key:id})
         retv = getattr(entity, set_key).values()
-        return JsonResponse(list(retv), safe    =False)
+        return JsonResponse(list(retv), safe=False)
     else:
         return HttpResponse(False)
+
+@csrf_exempt
+def get_testcase(request, testcase_id):
+    templates = 'testcase/testcase.html'
+    context = {'testcase':Testcase.objects.get(testcase_id=testcase_id)}
+    return render(request, templates, context)
