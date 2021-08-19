@@ -19,5 +19,6 @@ from apps.dooray import views, tasks
 
 urlpatterns = [
     path('', tasks._main, name='dooray_main'),
+    path('issue', tasks._issue, name='dooray_issue'),
     path('grm', views.grm, name='get_grm' )
 	]

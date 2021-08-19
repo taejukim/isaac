@@ -1,16 +1,18 @@
 from __future__ import absolute_import, unicode_literals
 import json
+from django.http.response import JsonResponse
 import requests
 import pandas as pd
 # import pytz
 from datetime import datetime, timedelta, timezone
 from dateutil import parser as date_parser
-from apps.dooray.models import UserList
+from apps.dooray.models import TargetProject, UserList
 from django.core.mail import send_mail
 from django.template import loader
 from django.http import HttpResponse
 from isaac_project import env
 from celery import shared_task
+from apps.dooray.models import Tags
 
 
 class CollectDooray:
@@ -24,22 +26,27 @@ class CollectDooray:
     POSTS = []
     USERS = []
     
-    def __init__(self):
-        '''인증 토큰 헤더에 저장'''
+    def __init__(self, project_id):
+        '''init class'''
         self.session = requests.Session()
         key = 'Authorization'
         self.session.headers.update({key:env.dooray_token})
+        self.prj = self.get_project(project_id)
+
+    def get_project(self, project_id):
+        '''대상 프로젝트의 객체를 가져옴'''
+        url = f'project/v1/projects/{project_id}'
+        return TargetProject.objects.get_or_create(
+            project_id = project_id,
+            project_name = self.get_json(url)['result']['code'],
+            target_time = 'createdAt',
+            member_key = 'toMemberIds'
+        )[0]
 
     def get_json(self, url, params=None):
         '''JSON 응답을 사전 객체로 반환'''
         r = self.session.get(self.HOST+url, params=params)
         return json.loads(r.text)
-
-    def get_project_info(self, project_id):
-        '''대상 프로젝트의 이름을 가져옴'''
-        url = f'project/v1/projects/{project_id}'
-        r = self.get_json(url)
-        self.project_name = r['result']['code']
 
     def get_member(self, name=None, email=None, member_id=None):
         '''이름과 member_id를 사용해 Email을 가져옴'''
@@ -61,26 +68,28 @@ class CollectDooray:
                     return member
             return False
 
-    def get_posts(self, project_id, size=100, days_range=100):
+    def get_posts(self, size=100, days_range=200):
         '''대상 프로젝트를 API를 사용해 가져오는 메소드'''
         # project/v1/projects/{project_id}/posts
-        self.get_project_info(project_id)
-        url = f'project/v1/projects/{project_id}/posts'
+        url = f'project/v1/projects/{self.prj.project_id}/posts'
         page = 0
         past_dates = datetime.utcnow()-timedelta(days=days_range)
         past_dates = past_dates.replace(tzinfo=timezone.utc)
         while True:
             # st = datetime.now()
-            _params = {
+            params = {
                 'size':size,
                 'page':page,
                 'order':'-createdAt',
                 }
-            r = self.get_json(url, params=_params)
-            _posts = r.get('result')
-            if date_parser.parse(_posts[-1]['createdAt']) < past_dates:
+            r = self.get_json(url, params=params)
+            posts = r.get('result')
+            if posts:
+                if date_parser.parse(posts[-1]['createdAt']) < past_dates:
+                    break
+            else:
                 break
-            self.POSTS+=_posts
+            self.POSTS+=posts
             # print(page, len(posts), datetime.now()-st)
             page+=1
 
@@ -88,15 +97,15 @@ class CollectDooray:
         ''' 조회된 모든 프로젝트의 담당자의 정보(이메일)을 받아옴'''
         to_users=[]
         for to in to_user:
-            _member = to.get('member')
-            member_id = _member.get('organizationMemberId')
-            user_name = _member.get('name')
+            member = to.get('member')
+            member_id = member.get('organizationMemberId')
+            user_name = member.get('name')
             try:
-                _user_info = UserList.objects.get(member_id=member_id)
-                email = _user_info.email
+                user_info = UserList.objects.get(member_id=member_id)
+                email = user_info.email
             except Exception:
-                _user_info = self.get_member(name=user_name, member_id=member_id)
-                email = _user_info['externalEmailAddress']
+                user_info = self.get_member(name=user_name, member_id=member_id)
+                email = user_info['externalEmailAddress']
                 new_member = UserList(
                     name=user_name,
                     member_id=member_id,
@@ -119,13 +128,53 @@ class CollectDooray:
         self.USERS = pd.DataFrame(self.USERS).drop_duplicates()
         self.USERS.columns = ['name', 'email']
 
+    def get_tag(self, tag_id):
+        try:
+            return Tags.objects.get(tag_id=tag_id)
+        except:
+            tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
+            retv = self.get_json(tag_url)
+            tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
+            tag, _flag = Tags.objects.get_or_create(
+                project=self.prj,
+                tag_name=tag_name,
+                tag_id=tag_id
+                )
+            return tag
+
+    def make_dataframe_for_issue(self):
+        posts = []
+        for post in self.POSTS:
+            subject = post.get('subject')
+            post_id = post['id']
+            
+            post_number = post.get('number')
+            url = f'https://nhnent.dooray.com/project/posts/{post_id}'
+            created = date_parser.parse(post.get('createdAt'))
+            tags = ','.join([self.get_tag(tag['id']).tag_name\
+                     for tag in post['tags']])
+            posts.append(
+                {
+                    'project_id':self.prj.project_id,
+                    'project_name':self.prj.project_name,
+                    'post_id':post_id,
+                    'subject':subject,
+                    'post_number':post_number,
+                    'url':url,
+                    'tags':tags,
+                    'created':created.isoformat(),
+                }
+            )
+        print(len(posts))
+        return HttpResponse(json.dumps(posts))
+            
     def make_dataframe(self):
         '''메일링할 Task를 filtering 하여 Dataframe으로 변환'''
         _posts = []
         for post in self.POSTS:
             subject = post.get('subject')
             post_id = post['id']
-            project_Id = '{}-{}'.format(self.project_name, post.get('number'))
+            project_Id = '{}-{}'.format(self.prj.project_name, post.get('number'))
             url = f'https://nhnent.dooray.com/project/posts/{post_id}'
             created = date_parser.parse(post.get('createdAt'))
             status = post.get('workflowClass')
@@ -201,13 +250,12 @@ class CollectDooray:
 def _main(request):
     token = env.dooray_token
     project_id = '1573143134167076010' # toastcloud-qa
-    c = CollectDooray()
+    c = CollectDooray(project_id)
     c.clear_data()
-    c.get_posts(project_id=project_id, size=50, days_range=100)
+    c.get_posts(size=50, days_range=100)
     c.make_dataframe()
     c.get_users_dataframe()
     return c.send_mail()
-
 
 @shared_task
 def collect_dooray_task():
@@ -216,10 +264,20 @@ def collect_dooray_task():
     project_id = '1573143134167076010' # toastcloud-qa
     c = CollectDooray()
     c.clear_data()
-    c.get_posts(project_id=project_id, size=50, days_range=100)
+    c.get_posts(size=50, days_range=100)
     c.make_dataframe()
     c.get_users_dataframe()
     result = c.send_mail(http=False)
     now = datetime.now().isoformat()
     print(f'[{now}]{result}')
     return True
+
+def _issue(request):
+    token = env.dooray_token
+    project_id = '3000973564283604325' # tc-qa-defect-analysis
+    c = CollectDooray(project_id)
+    c.clear_data()
+    c.get_posts(size=50)
+    return c.make_dataframe_for_issue()
+    
+    
