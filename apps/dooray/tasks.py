@@ -142,6 +142,22 @@ class CollectDooray:
                 )
             return tag
 
+    def update_tag(self, tag_id):
+        try:
+            tag = Tags.objects.get(tag_id=tag_id)
+        except:
+            print('no tag_id in data')
+            return False
+        tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
+        retv = self.get_json(tag_url)
+        tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
+        if tag_name != tag.tag_name:
+            tag.tag_name = tag_name
+            tag.save()
+            return True
+        return False
+
+
     def make_dataframe_for_issue(self):
         posts = []
         for post in self.POSTS:
@@ -262,7 +278,7 @@ def collect_dooray_task():
     # for shell
     token = env.dooray_token
     project_id = '1573143134167076010' # toastcloud-qa
-    c = CollectDooray()
+    c = CollectDooray(project_id)
     c.clear_data()
     c.get_posts(size=50, days_range=100)
     c.make_dataframe()
@@ -280,4 +296,11 @@ def _issue(request):
     c.get_posts(size=50)
     return c.make_dataframe_for_issue()
     
-    
+def _tag_update(request):
+    token = env.dooray_token
+    project_id = '3000973564283604325' # tc-qa-defect-analysis
+    c = CollectDooray(project_id)
+    tags = Tags.objects.all()
+    for tag in tags:
+        print(c.update_tag(tag.tag_id))
+    return HttpResponse("OK")

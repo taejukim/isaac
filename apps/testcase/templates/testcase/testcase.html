@@ -2,9 +2,17 @@
 <div class="testcaseTitle">
     <button class="btn btn-rounded btn-space btn-primary">{{testcase.testcase_id}}</button>
     <span class="testcaseSummary">{{testcase.summary}}</span>
-    <a class="btn btn-space btn-secondary testcaseHandler" href="edit/{{testcase.testcase_id}}">
+    <a class="btn btn-space testcaseHandler" href="edit/{{testcase.testcase_id}}">
+        <i class="mdi mdi-delete"></i>
+        Delete
+    </a>
+    <a class="btn btn-space testcaseHandler" href="edit/{{testcase.testcase_id}}">
         <i class="mdi mdi-edit"></i>
         Edit
+    </a>
+    <a class="btn btn-space testcaseHandler" href="edit/{{testcase.testcase_id}}">
+        <i class="mdi mdi-collection-plus"></i>
+        Add
     </a>
 </div>
 <!-- Testcase attributes -->
@@ -68,7 +76,7 @@
                 </td>
                 <td class="step-contents">
                     <div class="card">{{procedure.procedure}}</div>
-                    <div class="card"> {{procedure.expect_result}}</div>
+                    <div class="card"> → &nbsp; {{procedure.expect_result}}</div>
                 </td>
             </tr>
             {% endfor %}

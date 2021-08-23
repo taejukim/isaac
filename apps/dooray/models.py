@@ -40,9 +40,12 @@ class TargetProject(models.Model):
         verbose_name_plural = 'TargetProject'
 
 class Tags(models.Model):
+
     project = models.ForeignKey(TargetProject, on_delete=models.CASCADE)
     tag_id = models.CharField(max_length=100)
     tag_name = models.CharField(max_length=100)
+    tag_type = models.CharField(max_length=100, blank=True, null=True)
+    tag_class = models.CharField(max_length=100, blank=True, null=True)
     esm_name = models.CharField(max_length=100, blank=True, null=True)
     esm_code = models.CharField(max_length=100, blank=True, null=True)
 
@@ -55,3 +58,29 @@ class Tags(models.Model):
         verbose_name_plural = 'DoorayTags'
 
 # class GRMHistory(models.Model):
+
+class Issues(models.Model):
+    project_id = models.CharField(max_length=100)#
+    projct_name = models.CharField(max_length=100)#
+    post_id = models.CharField(max_length=100)#
+    subject = models.TextField()#
+    post_number = models.IntegerField()#
+    url = models.URLField() #
+    tags = models.ManyToManyField(Tags)
+    defect_type = models.CharField(max_length=255, blank=True, null=True)
+    defect_cause = models.CharField(max_length=255, blank=True, null=True)
+    nondetect_reason = models.CharField(max_length=255, blank=True, null=True)
+    detail = models.CharField(max_length=255, blank=True, null=True)
+    grade = models.CharField(max_length=100, blank=True, null=True)
+    environment = models.CharField(max_length=100, blank=True, null=True)
+    owner = models.CharField(max_length=100, blank=True, null=True)
+    remarks = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.task_id
+
+    class Meta:
+        managed = True
+        verbose_name = 'Issues'
+        verbose_name_plural = 'Issues'
