@@ -242,7 +242,7 @@ class CollectDooray:
             # overdue_df = posts_df[posts_df.status == 'overdue']
             posts_df = posts_df.sort_values(by=['overdue'], ascending=False)
             user_name = user['name']
-            title = f'[알림]{self.project_name} 미 완료 업무 List - {user_name}'
+            title = f'[알림]{self.prj.project_name} 미 완료 업무 List - {user_name}'
             template = loader.get_template('mail_template.html')
             context = {
                 'total_count':len(posts_df),
