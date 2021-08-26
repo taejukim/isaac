@@ -102,6 +102,7 @@ def get_issues(request):
         task_id = project_name+"/"+str(issue.post_number)
         subject = issue.subject
         url = issue.url
+        milestone = issue.milestone
         created_at = issue.created
         service=grade=environment=defect_cause=\
              defect_cause_detail=non_detect_reason=non_detect_reason_detail=''
@@ -126,6 +127,7 @@ def get_issues(request):
                 'subject':subject,
                 'service':service,
                 'url':url,
+                'milestone':milestone,
                 'grade':grade,
                 'environment':environment,
                 'defect_cause':defect_cause,

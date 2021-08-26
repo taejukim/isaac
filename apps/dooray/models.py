@@ -67,6 +67,7 @@ class Issues(models.Model):
     post_number = models.IntegerField()#
     url = models.URLField() #
     tags = models.ManyToManyField(Tags, related_name="tags")
+    milestone = models.CharField(max_length=255, blank=True, null=True)#
     remarks = models.TextField()
     created = models.DateTimeField()
 

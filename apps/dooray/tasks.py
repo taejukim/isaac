@@ -164,9 +164,24 @@ class CollectDooray:
             subject = post.get('subject')
             post_id = post['id']
             post_number = post.get('number')
+            try:
+                milestone = post.get('milestone')['name']
+            except:
+                milestone = ''
             url = f'https://nhnent.dooray.com/project/posts/{post_id}'
             created = date_parser.parse(post.get('createdAt'))
-            if Issues.objects.filter(post_id=post_id):
+            exist_issue = Issues.objects.filter(post_id=post_id)
+            if exist_issue:
+                exist_issue.update(
+                    project_id = self.prj.project_id,
+                    project_name = self.prj.project_name,
+                    post_id = post_id,
+                    subject = subject,
+                    post_number = post_number,
+                    url = url,
+                    milestone = milestone,
+                    created = created
+                )
                 print(post_id, 'is exists')
                 continue
             new_issue = Issues(
@@ -176,6 +191,7 @@ class CollectDooray:
                 subject = subject,
                 post_number = post_number,
                 url = url,
+                milestone = milestone,
                 created = created
                 )
             new_issue.save()
