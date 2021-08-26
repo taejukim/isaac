@@ -93,6 +93,8 @@ def grm(request):
 
 def get_issues(request):
     _issues = []
+    
+
     issues = Issues.objects.all()
     for issue in issues:
         post_id = issue.post_id
@@ -133,5 +135,23 @@ def get_issues(request):
                 'created_at':created_at.isoformat()
             }
         )
-
+    if request.GET.get('export') == 'excel':
+        file_name = str(datetime.strftime(datetime.now(),'real_defect_%y%m%d%H%M%S.xlsx'))
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        df = pd.DataFrame(_issues)
+        writer = pd.ExcelWriter(response, engine='xlsxwriter')
+        df.to_excel(writer, sheet_name='issues')  # send df to writer
+        worksheet = writer.sheets['issues']  # pull worksheet object
+        for idx, col in enumerate(df):  # loop through all columns
+            series = df[col]
+            max_len = max((
+                series.astype(str).map(len).max(),  # len of largest item
+                len(str(series.name))  # len of column name/header
+                )) + 1  # adding a little extra space
+            max_len = 50 if max_len > 50 else max_len
+            worksheet.set_column(idx+1, idx+1, max_len)  # set column width
+        writer.save()
+        # df.to_excel(response)
+        return response
     return JsonResponse({"data":_issues})
