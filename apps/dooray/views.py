@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from apps.dooray.tasks import CollectDooray
+from apps.dooray.tasks import CollectDooray, _issue
 from accounts.views import get_session
-from apps.dooray.models import TargetProject, Tags
+from apps.dooray.models import Issues, TargetProject, Tags
 from django.http.response import JsonResponse, HttpResponse
 import pandas as pd
 
@@ -90,3 +90,48 @@ def grm(request):
     grm_result = pd.DataFrame(grm_result).to_html()
     tasks = pd.DataFrame(tasks).to_html()
     return HttpResponse(grm_result + tasks)
+
+def get_issues(request):
+    _issues = []
+    issues = Issues.objects.all()
+    for issue in issues:
+        post_id = issue.post_id
+        project_name = issue.project_name
+        task_id = project_name+"/"+post_id
+        subject = issue.subject
+        url = issue.url
+        created_at = issue.created
+        service=grade=environment=defect_cause=\
+             defect_cause_detail=non_detect_reason=non_detect_reason_detail=''
+        for tag in issue.tags.all():
+            if tag.tag_type == 'service':
+                service=tag.tag_name
+            if tag.tag_type == 'grade':
+                grade=tag.tag_name
+            if tag.tag_type == 'environment':
+                environment=tag.tag_name
+            if tag.tag_type == '결함 원인':
+                defect_cause = tag.tag_class
+                defect_cause_detail = tag.tag_name
+            if tag.tag_type == '미검출 사유':
+                non_detect_reason = tag.tag_class
+                non_detect_reason_detail = tag.tag_name
+        _issues.append(
+            {
+                'post_id':post_id,
+                'proect_name':project_name,
+                'task_id':task_id,
+                'subject':subject,
+                'service':service,
+                'url':url,
+                'grade':grade,
+                'environment':environment,
+                'defect_cause':defect_cause,
+                'defect_cause_detail':defect_cause_detail,
+                'non_detect_reason':non_detect_reason,
+                'non_detect_reason_detail':non_detect_reason_detail,
+                'created_at':created_at.isoformat()
+            }
+        )
+
+    return JsonResponse({"data":_issues})

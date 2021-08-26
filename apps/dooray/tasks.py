@@ -6,14 +6,14 @@ import pandas as pd
 # import pytz
 from datetime import datetime, timedelta, timezone
 from dateutil import parser as date_parser
-from apps.dooray.models import TargetProject, UserList
+from apps.dooray.models import Issues, TargetProject, UserList
 from django.core.mail import send_mail
 from django.template import loader
 from django.http import HttpResponse
 from isaac_project import env
 from celery import shared_task
 from apps.dooray.models import Tags
-
+from django.core import serializers
 
 class CollectDooray:
     '''
@@ -163,26 +163,26 @@ class CollectDooray:
         for post in self.POSTS:
             subject = post.get('subject')
             post_id = post['id']
-            
             post_number = post.get('number')
             url = f'https://nhnent.dooray.com/project/posts/{post_id}'
             created = date_parser.parse(post.get('createdAt'))
-            tags = ','.join([self.get_tag(tag['id']).tag_name\
-                     for tag in post['tags']])
-            posts.append(
-                {
-                    'project_id':self.prj.project_id,
-                    'project_name':self.prj.project_name,
-                    'post_id':post_id,
-                    'subject':subject,
-                    'post_number':post_number,
-                    'url':url,
-                    'tags':tags,
-                    'created':created.isoformat(),
-                }
-            )
+            if Issues.objects.filter(post_id=post_id):
+                print(post_id, 'is exists')
+                continue
+            new_issue = Issues(
+                project_id = self.prj.project_id,
+                project_name = self.prj.project_name,
+                post_id = post_id,
+                subject = subject,
+                post_number = post_number,
+                url = url,
+                created = created
+                )
+            new_issue.save()
+            new_issue.tags.add(*[self.get_tag(tag['id']) for tag in post['tags']])
+            posts.append(new_issue.id)
         print(len(posts))
-        return HttpResponse(json.dumps(posts))
+        return HttpResponse('OK')
             
     def make_dataframe(self):
         '''메일링할 Task를 filtering 하여 Dataframe으로 변환'''

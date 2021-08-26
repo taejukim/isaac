@@ -61,24 +61,17 @@ class Tags(models.Model):
 
 class Issues(models.Model):
     project_id = models.CharField(max_length=100)#
-    projct_name = models.CharField(max_length=100)#
+    project_name = models.CharField(max_length=100)#
     post_id = models.CharField(max_length=100)#
     subject = models.TextField()#
     post_number = models.IntegerField()#
     url = models.URLField() #
-    tags = models.ManyToManyField(Tags)
-    defect_type = models.CharField(max_length=255, blank=True, null=True)
-    defect_cause = models.CharField(max_length=255, blank=True, null=True)
-    nondetect_reason = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.CharField(max_length=255, blank=True, null=True)
-    grade = models.CharField(max_length=100, blank=True, null=True)
-    environment = models.CharField(max_length=100, blank=True, null=True)
-    owner = models.CharField(max_length=100, blank=True, null=True)
+    tags = models.ManyToManyField(Tags, related_name="tags")
     remarks = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField()
 
     def __str__(self):
-        return self.task_id
+        return self.subject
 
     class Meta:
         managed = True
