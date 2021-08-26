@@ -97,7 +97,7 @@ def get_issues(request):
     for issue in issues:
         post_id = issue.post_id
         project_name = issue.project_name
-        task_id = project_name+"/"+post_id
+        task_id = project_name+"/"+str(issue.post_number)
         subject = issue.subject
         url = issue.url
         created_at = issue.created
