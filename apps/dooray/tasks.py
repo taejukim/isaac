@@ -158,7 +158,7 @@ class CollectDooray:
         return False
 
 
-    def make_dataframe_for_issue(self):
+    def make_dataframe_for_issue(self, http=True):
         posts = []
         for post in self.POSTS:
             subject = post.get('subject')
@@ -197,8 +197,10 @@ class CollectDooray:
             new_issue.save()
             new_issue.tags.add(*[self.get_tag(tag['id']) for tag in post['tags']])
             posts.append(new_issue.id)
-        print(len(posts))
-        return HttpResponse('OK')
+        
+        if http:
+            return HttpResponse('OK')
+        return 'Collect issue OK'
             
     def make_dataframe(self):
         '''메일링할 Task를 filtering 하여 Dataframe으로 변환'''
@@ -303,6 +305,15 @@ def collect_dooray_task():
     now = datetime.now().isoformat()
     print(f'[{now}]{result}')
     return True
+
+@shared_task
+def collect_issue():
+    token = env.dooray_token
+    project_id = '3000973564283604325' # tc-qa-defect-analysis
+    c = CollectDooray(project_id)
+    c.clear_data()
+    c.get_posts(size=50)
+    return c.make_dataframe_for_issue(http=False)
 
 def _issue(request):
     token = env.dooray_token
