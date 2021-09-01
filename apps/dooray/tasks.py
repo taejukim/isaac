@@ -6,7 +6,7 @@ import pandas as pd
 # import pytz
 from datetime import datetime, timedelta, timezone
 from dateutil import parser as date_parser
-from apps.dooray.models import Issues, TargetProject, UserList
+from apps.dooray.models import Issues, TargetProject, UserList, UpdateHistory
 from django.core.mail import send_mail
 from django.template import loader
 from django.http import HttpResponse
@@ -308,20 +308,23 @@ def collect_dooray_task():
 
 @shared_task
 def collect_issue():
-    token = env.dooray_token
-    project_id = '3000973564283604325' # tc-qa-defect-analysis
-    c = CollectDooray(project_id)
-    c.clear_data()
-    c.get_posts(size=50)
-    return c.make_dataframe_for_issue(http=False)
+    collect_issue_task(http=False)
 
-def _issue(request):
+def collect_issue_manual(request):
+   collect_issue_task(http=True)
+
+def collect_issue_task(http=True):
     token = env.dooray_token
     project_id = '3000973564283604325' # tc-qa-defect-analysis
     c = CollectDooray(project_id)
     c.clear_data()
     c.get_posts(size=50)
-    return c.make_dataframe_for_issue()
+    history = UpdateHistory(
+        remarks="update"
+    )
+    history.save()
+    return c.make_dataframe_for_issue(http=http)
+
     
 def _tag_update(request):
     token = env.dooray_token

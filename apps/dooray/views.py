@@ -1,11 +1,10 @@
-from django.shortcuts import render
-from apps.dooray.tasks import CollectDooray, _issue
 from accounts.views import get_session
-from apps.dooray.models import Issues, TargetProject, Tags
+from apps.dooray.tasks import *
+from apps.dooray.models import Issues, TargetProject, Tags, UpdateHistory
 from django.http.response import JsonResponse, HttpResponse
 import pandas as pd
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil import parser
 
 class CollectGRM(CollectDooray):
@@ -92,9 +91,10 @@ def grm(request):
     return HttpResponse(grm_result + tasks)
 
 def get_issues(request):
+    if request.GET.get('update')=='true':
+        print('start_update')
+        collect_issue_task(http=False)
     _issues = []
-    
-
     issues = Issues.objects.all()
     for issue in issues:
         post_id = issue.post_id
@@ -106,6 +106,9 @@ def get_issues(request):
         created_at = issue.created
         service=grade=environment=defect_cause=\
              defect_cause_detail=non_detect_reason=non_detect_reason_detail=''
+        # tag_type : 대분류
+        # tag_class  : 중분류
+        # tag_name : 소분류
         for tag in issue.tags.all():
             if tag.tag_type == 'service':
                 service=tag.tag_name
@@ -156,4 +159,9 @@ def get_issues(request):
         writer.save()
         # df.to_excel(response)
         return response
-    return JsonResponse({"data":_issues})
+    update_date = UpdateHistory.objects.all().last()
+    update_date_kst=update_date.updated + timedelta(hours=9)
+    return JsonResponse({
+        "last_update_datetime":update_date_kst.strftime('%Y-%m-%d %H:%M:%S'),
+        "data":_issues,
+        })
