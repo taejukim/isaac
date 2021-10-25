@@ -2,8 +2,9 @@ from accounts.views import get_session
 from apps.dooray.tasks import *
 from apps.dooray.models import Issues, TargetProject, Tags, UpdateHistory
 from django.http.response import JsonResponse, HttpResponse
-import pandas as pd
+from django.shortcuts import render
 
+import pandas as pd
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 
@@ -165,3 +166,62 @@ def get_issues(request):
         "last_update_datetime":update_date_kst.strftime('%Y-%m-%d %H:%M:%S'),
         "data":_issues,
         })
+
+def wtrs(request):
+
+    department_fields = [
+    '회사명',
+    'LV2 부서명',
+    'LV3 부서명',
+    'LV4 부서명',
+    '최종부서'
+    ]
+    employee_fields = [
+        '사번',
+        '사원이름',
+    ]
+
+    work_fields = [
+        'OMS코드',
+        '발주 업무명',
+        'Lv2서비스 코드',
+        'Lv2서비스 코드명',
+    ]
+    sum_field =['인월(서비스별 실적/합계실적)(시간)']
+
+    qa1_member = ['이연주', '고준영', '여운일', '정정아', '최영준', '김동원']
+    qa2_member = ['신선주', '권혜조', '김명지', '김주영','염요섭']
+    qa3_member = ['김태주', '장선향', '정연주', '이재희', '김혜정']
+    qa4_member = ['김인선', '안민형']
+    members = qa1_member+qa2_member+qa3_member+qa4_member
+
+    if request.method == 'POST':
+        try:
+            wtrs_file = request.FILES['wtrs_file']
+            xl = pd.read_excel(wtrs_file, header=2)
+            df = xl[department_fields+employee_fields+work_fields+sum_field]
+            qa_members = df[df["사원이름"].isin(members)]
+            qa_members = qa_members[qa_members['LV4 부서명']=='클라우드QA팀']
+            result_df = qa_members.groupby(department_fields+employee_fields+work_fields, as_index=False).sum(sum_field)
+            file_name = str(datetime.strftime(datetime.now(),'wtrs_%y%m%d%H%M%S.xlsx'))
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+
+            writer = pd.ExcelWriter(response, engine='xlsxwriter')
+            result_df.to_excel(writer, sheet_name='wtrs')  # send df to writer
+            worksheet = writer.sheets['wtrs']  # pull worksheet object
+            for idx, col in enumerate(df):  # loop through all columns
+                series = df[col]
+                max_len = max((
+                    series.astype(str).map(len).max(),  # len of largest item
+                    len(str(series.name))  # len of column name/header
+                    )) + 1  # adding a little extra space
+                max_len = 50 if max_len > 50 else max_len
+                worksheet.set_column(idx+1, idx+1, max_len)  # set column width
+            writer.save()
+            # df.to_excel(response)
+            return response
+        except:
+            return render(request, 'wtrs.html', {'result':'fail'})
+    else:
+        return render(request, 'wtrs.html', {'result':True})
