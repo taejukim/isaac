@@ -191,7 +191,7 @@ def wtrs(request):
 
     qa1_member = ['이연주', '고준영', '여운일', '정정아', '최영준', '김동원']
     qa2_member = ['신선주', '권혜조', '김명지', '김주영','염요섭']
-    qa3_member = ['김태주', '장선향', '정연주', '이재희', '김혜정']
+    qa3_member = ['김태주', '장선향', '정연주', '이재희', '김혜정', '이동규']
     qa4_member = ['김인선', '안민형']
     members = qa1_member+qa2_member+qa3_member+qa4_member
 

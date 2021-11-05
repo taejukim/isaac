@@ -252,7 +252,7 @@ class CollectDooray:
         # To-do User table에서 동적으로 가져오기
         target_user = ['신선주','이연주','김태주','장선향','정연주','권혜조','김동원',
                    '정정아','최영준','여운일','김인선','김주영','이재희', '김명지', 
-                    '염요섭', '안민형', '고준영', '김혜정']
+                    '염요섭', '안민형', '고준영', '김혜정', '이동규']
         # target_user = ['김태주']
         self.USERS=self.USERS[self.USERS.name.isin(target_user)]
         for _, user in self.USERS.iterrows():
