@@ -1,9 +1,10 @@
 from django.contrib import admin
-from apps.dooray.models import Issues, UserList, TargetProject, Tags
+from apps.dooray.models import Issues, QAMember, UserList, TargetProject, Tags
 
 admin.site.register(UserList)
 admin.site.register(TargetProject)
 admin.site.register(Issues)
+admin.site.register(QAMember)
 
 @admin.register(Tags)
 class TagsAdmin(admin.ModelAdmin):

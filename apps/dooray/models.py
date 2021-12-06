@@ -90,3 +90,13 @@ class UpdateHistory(models.Model):
     class Meta:
         managed = True
         verbose_name = 'UpdateHistory'
+
+class QAMember(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
+
+    class Meta: 
+        managed = True
+        verbose_name = 'QAMember'

@@ -193,7 +193,9 @@ def wtrs(request):
     qa2_member = ['신선주', '권혜조', '김명지', '김주영','염요섭']
     qa3_member = ['김태주', '장선향', '정연주', '이재희', '김혜정', '이동규']
     qa4_member = ['김인선', '안민형']
-    members = qa1_member+qa2_member+qa3_member+qa4_member
+
+    ## members = qa1_member+qa2_member+qa3_member+qa4_member
+    members = list(QAMember.objects.values_list('name', flat=True))
 
     if request.method == 'POST':
         try:
