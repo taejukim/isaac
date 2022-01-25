@@ -4,6 +4,7 @@ from apps.dooray.models import Issues, TargetProject, Tags, UpdateHistory
 from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import render
 
+import warnings
 import pandas as pd
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
@@ -200,10 +201,12 @@ def wtrs(request):
     if request.method == 'POST':
         try:
             wtrs_file = request.FILES['wtrs_file']
-            xl = pd.read_excel(wtrs_file, header=2)
+            with warnings.catch_warnings(record=True):
+                warnings.simplefilter("always")
+                xl = pd.read_excel(wtrs_file, header=2, engine="openpyxl")
             df = xl[department_fields+employee_fields+work_fields+sum_field]
             qa_members = df[df["사원이름"].isin(members)]
-            qa_members = qa_members[qa_members['LV4 부서명']=='클라우드QA팀']
+            qa_members = qa_members[(qa_members['LV4 부서명']=='클라우드ServiceQA팀')|(qa_members['LV4 부서명']=='클라우드InfraQA팀')]
             result_df = qa_members.groupby(department_fields+employee_fields+work_fields, as_index=False).sum(sum_field)
             file_name = str(datetime.strftime(datetime.now(),'wtrs_%y%m%d%H%M%S.xlsx'))
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

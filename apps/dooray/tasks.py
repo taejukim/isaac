@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 import json
+from json.decoder import JSONDecodeError
 from django.http.response import JsonResponse
 import requests
 import pandas as pd
@@ -46,7 +47,13 @@ class CollectDooray:
     def get_json(self, url, params=None):
         '''JSON 응답을 사전 객체로 반환'''
         r = self.session.get(self.HOST+url, params=params)
-        return json.loads(r.text)
+        try: 
+            response = json.loads(r.text)
+        except JSONDecodeError as e:
+            print(e)
+            return False
+        return response
+
 
     def get_member(self, name=None, email=None, member_id=None):
         '''이름과 member_id를 사용해 Email을 가져옴'''
@@ -150,6 +157,9 @@ class CollectDooray:
             return False
         tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
         retv = self.get_json(tag_url)
+        if not retv:
+            tag.delete() # Dooray에서 삭제된 경우
+            return False
         tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
         if tag_name != tag.tag_name:
             tag.tag_name = tag_name
@@ -330,5 +340,9 @@ def _tag_update(request):
     c = CollectDooray(project_id)
     tags = Tags.objects.all()
     for tag in tags:
+        print(tag.tag_id, tag.tag_name)
+        if tag.tag_id == '3054458781647854325':
+            print(tag)
         print(c.update_tag(tag.tag_id))
+    # https://nhnent.dooray.com/v2/wapi/projects/!3000973564283604325/tags?size=10000
     return HttpResponse("OK")
