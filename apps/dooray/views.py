@@ -92,12 +92,12 @@ def grm(request):
     tasks = pd.DataFrame(tasks).to_html()
     return HttpResponse(grm_result + tasks)
 
-def get_issues(request):
+def get_issues(request, project_name):
     if request.GET.get('update')=='true':
-        print('start_update')
-        collect_issue_task(http=False)
+        print('start update')
+        collect_issue_task(http=False, project_name=project_name)
     _issues = []
-    issues = Issues.objects.all()
+    issues = Issues.objects.filter(project_name=project_name)
     for issue in issues:
         post_id = issue.post_id
         project_name = issue.project_name
