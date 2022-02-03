@@ -1,7 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 import json
 from json.decoder import JSONDecodeError
+import string
 from django.http.response import JsonResponse
+from numpy import delete
 import requests
 import pandas as pd
 # import pytz
@@ -15,6 +17,8 @@ from isaac_project import env
 from celery import shared_task
 from apps.dooray.models import Tags
 from django.core import serializers
+from django.db.models.query import QuerySet
+
 
 class CollectDooray:
     '''
@@ -54,7 +58,6 @@ class CollectDooray:
             return False
         return response
 
-
     def get_member(self, name=None, email=None, member_id=None):
         '''이름과 member_id를 사용해 Email을 가져옴'''
         # common/v1/members?name=
@@ -76,7 +79,7 @@ class CollectDooray:
             return False
 
     def get_posts(self, size=100, days_range=200):
-        '''대상 프로젝트를 API를 사용해 가져오는 메소드'''
+        '''대상 프로젝트 Post를 API를 사용해 가져오는 메소드'''
         # project/v1/projects/{project_id}/posts
         url = f'project/v1/projects/{self.prj.project_id}/posts'
         page = 0
@@ -134,83 +137,6 @@ class CollectDooray:
         '''조회된 모든 User의 중복 제거'''
         self.USERS = pd.DataFrame(self.USERS).drop_duplicates()
         self.USERS.columns = ['name', 'email']
-
-    def get_tag(self, tag_id):
-        try:
-            return Tags.objects.get(tag_id=tag_id)
-        except:
-            tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
-            retv = self.get_json(tag_url)
-            tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
-            tag, _flag = Tags.objects.get_or_create(
-                project=self.prj,
-                tag_name=tag_name,
-                tag_id=tag_id
-                )
-            return tag
-
-    def update_tag(self, tag_id):
-        try:
-            tag = Tags.objects.get(tag_id=tag_id)
-        except:
-            print('no tag_id in data')
-            return False
-        tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
-        retv = self.get_json(tag_url)
-        if not retv:
-            tag.delete() # Dooray에서 삭제된 경우
-            return False
-        tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
-        if tag_name != tag.tag_name:
-            tag.tag_name = tag_name
-            tag.save()
-            return True
-        return False
-
-
-    def make_dataframe_for_issue(self, http=True):
-        posts = []
-        for post in self.POSTS:
-            subject = post.get('subject')
-            post_id = post['id']
-            post_number = post.get('number')
-            try:
-                milestone = post.get('milestone')['name']
-            except:
-                milestone = ''
-            url = f'https://nhnent.dooray.com/project/posts/{post_id}'
-            created = date_parser.parse(post.get('createdAt'))
-            exist_issue = Issues.objects.filter(post_id=post_id)
-            if exist_issue:
-                exist_issue.update(
-                    project_id = self.prj.project_id,
-                    project_name = self.prj.project_name,
-                    post_id = post_id,
-                    subject = subject,
-                    post_number = post_number,
-                    url = url,
-                    milestone = milestone,
-                    created = created
-                )
-                print(post_id, 'is exists')
-                continue
-            new_issue = Issues(
-                project_id = self.prj.project_id,
-                project_name = self.prj.project_name,
-                post_id = post_id,
-                subject = subject,
-                post_number = post_number,
-                url = url,
-                milestone = milestone,
-                created = created
-                )
-            new_issue.save()
-            new_issue.tags.add(*[self.get_tag(tag['id']) for tag in post['tags']])
-            posts.append(new_issue.id)
-        
-        if http:
-            return HttpResponse('OK')
-        return 'Collect issue OK'
             
     def make_dataframe(self):
         '''메일링할 Task를 filtering 하여 Dataframe으로 변환'''
@@ -284,11 +210,168 @@ class CollectDooray:
         return 'Send Mail OK'
     
     def clear_data(self):
-        '''이전 정보 삭제'''
+        '''이전 정보 초기화'''
         self.POSTS = []
         self.USERS = []
 
+class CollectIssue(CollectDooray):
 
+    # def get_tag(self, tag_id):
+    #     try:
+    #         return Tags.objects.get(tag_id=tag_id)
+    #     except:
+    #         tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
+    #         retv = self.get_json(tag_url)
+    #         tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
+    #         tag, _flag = Tags.objects.get_or_create(
+    #             project=self.prj,
+    #             tag_name=tag_name,
+    #             tag_id=tag_id
+    #             )
+    #         return tag
+
+    def update_tag(self):
+        updated_tags = list()
+
+        # get all tag from project and isaac
+        tags_from_dooray: pd.DataFrame = self.get_all_tags_in_project()
+        tags_from_issac: QuerySet = Tags.objects.filter(project__project_id=self.prj.project_id)\
+                                .values('tag_id', 'tag_name')
+
+        # Standardization
+        tags_from_issac = pd.DataFrame(tags_from_issac)
+        try:
+            tags_from_issac.columns = ['id', 'name']
+        except:
+            tags_from_issac = pd.DataFrame(columns=['id', 'name'])
+
+        tags_from_issac: pd.DataFrame = tags_from_issac.set_index('id')
+
+        # merge
+        merged = pd.merge(tags_from_dooray, tags_from_issac, 
+            how='outer', left_index=True, right_index=True, indicator=True)
+
+        # get need to update
+        need_to_update = merged[((merged['name_x']==merged['name_y'])==False)\
+                                 & (merged['_merge']=='both')]
+        if not need_to_update.empty:
+            updated_tags += self.get_update_history(need_to_update, 'update')
+            # bulk update
+            update_target = Tags.objects.filter(tag_id__in=need_to_update.index.to_list())
+            update_tag_list = self.get_standardized_tags(need_to_update.name_x)
+            for tag in update_target:
+                tag.tag_name = update_tag_list[update_tag_list.tag_id==tag.tag_id].tag_name.values.item()
+            Tags.objects.bulk_update(update_tag_list, ['tag_name'])
+        
+        # get need to add
+        need_to_add = merged[merged['_merge']=='left_only']
+        if not need_to_add.empty:
+            updated_tags += self.get_update_history(need_to_add, 'add')
+            # bulk add
+            add_tag_list = self.get_standardized_tags(need_to_add.name_x)
+            Tags.objects.bulk_create([Tags(**add_tag.to_dict()) for _, add_tag in add_tag_list.iterrows()])
+
+        # get need to delete
+        need_to_delete = merged[merged['_merge']=='right_only']
+        if not need_to_delete.empty:
+            updated_tags += self.get_update_history(need_to_delete, 'delete')
+            # delete
+            delete_tag_list = self.get_standardized_tags(need_to_delete.name_y)
+            Tags.objects.filter(tag_id__in=delete_tag_list.tag_id.to_list()).delete()
+        
+        if updated_tags:
+            self.send_history_mail(updated_tags)
+
+    def get_standardized_tags(self, target) -> pd.DataFrame:
+        tag_list = pd.DataFrame(target)
+        tag_list = tag_list.reset_index()
+        tag_list.columns = ['tag_id', 'tag_name']
+        tag_list['project'] = TargetProject.objects.get(project_id=self.prj.project_id)
+        return tag_list
+
+    def get_update_history(self, target_list:pd.DataFrame, update_type:str) -> list:
+        target = target_list.name_x
+        if update_type == 'delete':
+            target = target_list.name_y
+        target_df = self.get_standardized_tags(target)
+        target_df['update_type'] = update_type
+        return target_df.to_dict('records')
+
+    def send_history_mail(self, history:list):
+        html_template = '''
+        <html>
+            <body>
+                <h3>Updated tag list</h3>
+                <h4>{}</h4>
+                {}
+            </body>
+        </html>
+        '''
+        recipient_list = [
+            'taeju.kim@nhnsoft.com',
+            # 'yeonju.lee@nhnsoft.com',
+            # 'seonju.shin@nhnsoft.com',
+            # 'hyejo.kwon@nhnsoft.com',
+            # 'minjae.jin@nhnsoft.com',
+        ]
+        history_df = pd.DataFrame(history)
+        history_table =  history_df.to_html()
+        html = html_template.format(datetime.now().isoformat(), history_table)
+        send_mail('Dooray Tag update history',
+         '', self.FROM_USER, recipient_list, html_message=html)
+
+    def get_all_tags_in_project(self) -> pd.DataFrame:
+        tag_url = f'project/v1/projects/{self.prj.project_id}/tags?size=10000'
+        response = self.get_json(tag_url)
+        tag_list = pd.DataFrame(response.get('result'))[['id', 'name']]
+        tag_list = tag_list.set_index('id')
+        return tag_list
+        
+    def make_dataframe(self, http=True):
+        posts = []
+        for post in self.POSTS:
+            subject = post.get('subject')
+            post_id = post['id']
+            post_number = post.get('number')
+            try:
+                milestone = post.get('milestone')['name']
+            except:
+                milestone = ''
+            url = f'https://nhnent.dooray.com/project/posts/{post_id}'
+            created = date_parser.parse(post.get('createdAt'))
+            exist_issue = Issues.objects.filter(project_id=self.prj.project_id, post_id=post_id)
+            if exist_issue:
+                exist_issue.update(
+                    project_id = self.prj.project_id,
+                    project_name = self.prj.project_name,
+                    post_id = post_id,
+                    subject = subject,
+                    post_number = post_number,
+                    url = url,
+                    milestone = milestone,
+                    created = created
+                )
+                print(post_id, 'is exists')
+                continue
+            new_issue = Issues(
+                project_id = self.prj.project_id,
+                project_name = self.prj.project_name,
+                post_id = post_id,
+                subject = subject,
+                post_number = post_number,
+                url = url,
+                milestone = milestone,
+                created = created
+                )
+            new_issue.save()
+            # new_issue.tags.add(*[self.get_tag(tag['id']) for tag in post['tags']])
+            posts.append(new_issue.id)
+        
+        if http:
+            return HttpResponse('OK')
+        return 'Collect issue OK'
+
+# toastcloud-qa project task 관리
 def _main(request):
     token = env.dooray_token
     project_id = '1573143134167076010' # toastcloud-qa
@@ -314,6 +397,8 @@ def collect_dooray_task():
     print(f'[{now}]{result}')
     return True
 
+
+# 리얼 결함 이슈 분석
 @shared_task
 def collect_issue():
     collect_issue_task(http=False)
@@ -321,28 +406,29 @@ def collect_issue():
 def collect_issue_manual(request):
    collect_issue_task(http=True)
 
-def collect_issue_task(http=True):
-    token = env.dooray_token
-    project_id = '3000973564283604325' # tc-qa-defect-analysis
-    c = CollectDooray(project_id)
-    c.clear_data()
-    c.get_posts(size=50)
-    history = UpdateHistory(
-        remarks="update"
-    )
-    history.save()
-    return c.make_dataframe_for_issue(http=http)
-
+def collect_issue_task(http=True, project_name='all'):
+    if project_name == 'all':
+        target_project = ['3000973564283604325', '2570957930434228737']      
+    else:
+        target_project = [TargetProject.objects.get(project_name=project_name).project_id]
+    # project_id = '3000973564283604325' # tc-qa-defect-analysis
+    # project_id = '2570957930434228737' # tc-qa-iaas-bugs
+    for project_id in target_project:
+        c = CollectIssue(project_id)
+        c.clear_data()
+        c.get_posts(size=50)
+        c.update_tag()
+        history = UpdateHistory(
+            remarks="update"
+        )
+        history.save()
+        c.make_dataframe(http=http)
+    if http:
+        return HttpResponse('OK')
     
 def _tag_update(request):
     token = env.dooray_token
     project_id = '3000973564283604325' # tc-qa-defect-analysis
-    c = CollectDooray(project_id)
-    tags = Tags.objects.all()
-    for tag in tags:
-        print(tag.tag_id, tag.tag_name)
-        if tag.tag_id == '3054458781647854325':
-            print(tag)
-        print(c.update_tag(tag.tag_id))
-    # https://nhnent.dooray.com/v2/wapi/projects/!3000973564283604325/tags?size=10000
+    c = CollectIssue(project_id)
+    c.update_tag()
     return HttpResponse("OK")

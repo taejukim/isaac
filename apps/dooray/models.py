@@ -83,7 +83,6 @@ class UpdateHistory(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
     remarks = models.TextField()
 
-
     def __str__(self):
         return self.created
 
