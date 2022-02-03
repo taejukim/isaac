@@ -165,6 +165,7 @@ def get_issues(request, project_name):
     update_date_kst=update_date.updated + timedelta(hours=9)
     return JsonResponse({
         "last_update_datetime":update_date_kst.strftime('%Y-%m-%d %H:%M:%S'),
+        "total_count":len(issues),
         "data":_issues,
         })
 

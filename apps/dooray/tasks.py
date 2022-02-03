@@ -216,20 +216,6 @@ class CollectDooray:
 
 class CollectIssue(CollectDooray):
 
-    # def get_tag(self, tag_id):
-    #     try:
-    #         return Tags.objects.get(tag_id=tag_id)
-    #     except:
-    #         tag_url = f'project/v1/projects/{self.prj.project_id}/tags/{tag_id}'
-    #         retv = self.get_json(tag_url)
-    #         tag_name=retv['result']['name'].split(':')[-1].strip().replace('.','')
-    #         tag, _flag = Tags.objects.get_or_create(
-    #             project=self.prj,
-    #             tag_name=tag_name,
-    #             tag_id=tag_id
-    #             )
-    #         return tag
-
     def update_tag(self):
         updated_tags = list()
 
@@ -339,18 +325,18 @@ class CollectIssue(CollectDooray):
                 milestone = ''
             url = f'https://nhnent.dooray.com/project/posts/{post_id}'
             created = date_parser.parse(post.get('createdAt'))
-            exist_issue = Issues.objects.filter(project_id=self.prj.project_id, post_id=post_id)
+            exist_issue = Issues.objects.get(project_id=self.prj.project_id, post_id=post_id)
             if exist_issue:
-                exist_issue.update(
-                    project_id = self.prj.project_id,
-                    project_name = self.prj.project_name,
-                    post_id = post_id,
-                    subject = subject,
-                    post_number = post_number,
-                    url = url,
-                    milestone = milestone,
-                    created = created
-                )
+                exist_issue.project_id = self.prj.project_id
+                exist_issue.project_name = self.prj.project_name
+                exist_issue.post_id = post_id
+                exist_issue.subject = subject
+                exist_issue.post_number = post_number
+                exist_issue.url = url
+                exist_issue.milestone = milestone
+                exist_issue.created = created
+                exist_issue.tags.set([Tags.objects.get(tag_id=tag['id']) for tag in post['tags']])
+                exist_issue.save()
                 print(post_id, 'is exists')
                 continue
             new_issue = Issues(
@@ -364,7 +350,7 @@ class CollectIssue(CollectDooray):
                 created = created
                 )
             new_issue.save()
-            # new_issue.tags.add(*[self.get_tag(tag['id']) for tag in post['tags']])
+            new_issue.tags.add(*[Tags.objects.get(tag_id=tag['id']) for tag in post['tags']])
             posts.append(new_issue.id)
         
         if http:
@@ -415,9 +401,9 @@ def collect_issue_task(http=True, project_name='all'):
     # project_id = '2570957930434228737' # tc-qa-iaas-bugs
     for project_id in target_project:
         c = CollectIssue(project_id)
+        c.update_tag()
         c.clear_data()
         c.get_posts(size=50)
-        c.update_tag()
         history = UpdateHistory(
             remarks="update"
         )
