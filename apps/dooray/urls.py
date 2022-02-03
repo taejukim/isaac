@@ -20,8 +20,8 @@ from apps.dooray import views, tasks
 urlpatterns = [
     # path('', tasks._main, name='dooray_main'),
     path('update', tasks._tag_update, name='dooray_tag_update'),
-    path('issue', tasks.collect_issue_manual, name='dooray_issue'),
-    path('get_issue/<str:project_name>', views.get_issues, name='dooray_issues'),
+    # path('issue', tasks.collect_issue_manual, name='dooray_issue'),
+    path('issue/<str:project_name>', views.get_issues, name='dooray_issues'),
     path('grm', views.grm, name='get_grm' ),
     path('wtrs', views.wtrs, name='wtrs_to_grm')
 	]
