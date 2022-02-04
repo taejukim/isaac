@@ -295,10 +295,10 @@ class CollectIssue(CollectDooray):
         '''
         recipient_list = [
             'taeju.kim@nhnsoft.com',
-            # 'yeonju.lee@nhnsoft.com',
-            # 'seonju.shin@nhnsoft.com',
-            # 'hyejo.kwon@nhnsoft.com',
-            # 'minjae.jin@nhnsoft.com',
+            'yeonju.lee@nhnsoft.com',
+            'seonju.shin@nhnsoft.com',
+            'hyejo.kwon@nhnsoft.com',
+            'minjae.jin@nhnsoft.com',
         ]
         history_df = pd.DataFrame(history)
         history_table =  history_df.to_html()
