@@ -61,7 +61,7 @@ services:
   celery_flower:
     container_name: celery_flower
     image: isaac-image
-    command: sh -c "pip install flower && celery flower -A isaac_project --broker=amqp://rabbitmq:5672// --port=5555"
+    command: sh -c "pip install flower && celery -A isaac_project --broker="amqp://rabbitmq//" flower --port=5555"
     hostname: celery_flower
     depends_on:
       - rabbitmq
