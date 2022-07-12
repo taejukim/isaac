@@ -51,8 +51,8 @@ class Category(models.Model):
 
 class Service(models.Model):
     id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(Category, verbose_name="카테고리 이름", on_delete=models.CASCADE)
-    service = models.CharField(max_length=100, null=False, blank=False, verbose_name='카테고리 이름')
+    category = models.ForeignKey(Category, verbose_name="카테고리", on_delete=models.CASCADE)
+    service = models.CharField(max_length=100, null=False, blank=False, verbose_name='서비스 이름')
     priority = models.CharField(max_length=10, null=False, blank=False, verbose_name='우선순위')
     man_month = models.FloatField(verbose_name='Man Month')
     description = models.TextField(null=True, blank=True, verbose_name='비고')
