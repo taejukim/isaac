@@ -1,7 +1,4 @@
-import json
-from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse, JsonResponse
-from accounts import sso
+from django.shortcuts import redirect
 
 def main(request):
     if request.session.get('status'):
